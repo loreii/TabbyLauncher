@@ -4,12 +4,17 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
     
-    <GridView android:id="@+id/all_apps"
+   <org.tabbylauncher.Rotor
+      android:id="@+id/rotor"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"/>
+      
+    <!-- GridView android:id="@+id/all_apps"
         android:numColumns="auto_fit"
         android:columnWidth="78dp"
         android:stretchMode="spacingWidth"
         android:layout_height="fill_parent"
         android:layout_width="fill_parent"
-        android:visibility="visible" />
+        android:visibility="visible" /-->
 
 </LinearLayout>

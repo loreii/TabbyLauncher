@@ -49,7 +49,7 @@ public class Home extends Activity {
 
        loadApplications(true);
        
-       bindApplications();
+//       bindApplications();
       
               
     }
@@ -98,22 +98,22 @@ public class Home extends Activity {
             }
         }
     }
-    private void bindApplications() {
-        if (mGrid == null) {
-            mGrid = (GridView) findViewById(R.id.all_apps);
-        }
-        
-        Log.i("", "--------> mApplications size. "+mApplications.size());
-        mGrid.setAdapter(new ApplicationsAdapter(this, mApplications));
-        mGrid.setSelection(0);
-
-    }
+//    private void bindApplications() {
+//        if (mGrid == null) {
+//            mGrid = (GridView) findViewById(R.id.all_apps);
+//        }
+//        
+//        Log.i("", "--------> mApplications size. "+mApplications.size());
+//        mGrid.setAdapter(new ApplicationsAdapter(this, mApplications));
+//        mGrid.setSelection(0);
+//
+//    }
 
     private class ApplicationsIntentReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             loadApplications(false);
-            bindApplications();
+//            bindApplications();
         }
     }
     
