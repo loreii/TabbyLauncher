@@ -3,41 +3,28 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
-<<<<<<< HEAD
-     <org.tabbylauncher.component.HorizontalPager
+
+    <org.tabbylauncher.component.HorizontalPager
         android:id="@+id/horizontal_pager"
-=======
-    
-   <org.tabbylauncher.Rotor
-      android:id="@+id/rotor"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"/>
-      
-    <!-- GridView android:id="@+id/all_apps"
-        android:numColumns="auto_fit"
-        android:columnWidth="78dp"
-        android:stretchMode="spacingWidth"
-        android:layout_height="fill_parent"
->>>>>>> refs/heads/rotorComponent
         android:layout_width="fill_parent"
-<<<<<<< HEAD
-        android:layout_height="0px"
-        android:layout_weight="1" >
-    
+        android:layout_height="fill_parent" >
+
+        <org.tabbylauncher.Rotor
+            android:id="@+id/rotor"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
         <fragment
             android:id="@+id/app"
+            android:name="org.tabbylauncher.fragment.Applications"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:name="org.tabbylauncher.fragment.Applications" />
+            android:layout_height="wrap_content" />
+
         <fragment
             android:id="@+id/contact"
+            android:name="org.tabbylauncher.fragment.AllContacts"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:name="org.tabbylauncher.fragment.AllContacts" />    
+            android:layout_height="wrap_content" />
     </org.tabbylauncher.component.HorizontalPager>
-    
-=======
-        android:visibility="visible" /-->
 
->>>>>>> refs/heads/rotorComponent
 </LinearLayout>
