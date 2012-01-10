@@ -1,8 +1,20 @@
 package org.tabbylauncher;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -93,23 +105,41 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 		 * */
 		private void doDraw(Canvas canvas) {
 			
+			//todo move out
+			int mXCenter = mCanvasWidth/2 ;
+			int mYCenter = mCanvasHeight/2;
+			
 			mLinePaint.setARGB(255, 0, 0,0);
 			canvas.drawRect(0, 0, mCanvasWidth, mCanvasHeight, mLinePaint);
 
 			mLinePaint.setARGB(255, 0, 0, 255);
 			canvas.drawCircle(touchDownX, touchDownY, 20, mLinePaint);
-			// Ê Ê Ê Ê Ê ÊmLinePaint.setARGB(255, 255, 0, 0);
-			// Ê Ê Ê Ê Ê Êcanvas.drawText("##("+lambda+")",20, 20, mLinePaint);
-			// Ê Ê Ê Ê Ê ÊmLinePaint.setARGB(255, 0, 0, 255);
-			// Ê Ê Ê Ê Ê Êcanvas.drawLine(touchDownX, touchDownY,mCanvasWidth/2, mCanvasHeight/2, mLinePaint);
-			// Ê Ê Ê Ê Ê Êcanvas.drawLine(touchDownX, touchDownY,touchDownX, mCanvasHeight/2, mLinePaint);
-			// Ê Ê Ê Ê Ê Êcanvas.drawLine(touchDownX, mCanvasHeight/2,mCanvasWidth/2, mCanvasHeight/2, mLinePaint);
-			// Ê Ê Ê Ê Ê Ê
+			//mLinePaint.setARGB(255, 255, 0, 0);
+			//canvas.drawText("##("+lambda+")",20, 20, mLinePaint);
+			
+			
+			
+			//mLinePaint.setARGB(255, 0, 0, 255);
+			//canvas.drawLine(touchDownX, touchDownY,mCanvasWidth/2, mCanvasHeight/2, mLinePaint);
+			//canvas.drawLine(touchDownX, touchDownY,touchDownX, mCanvasHeight/2, mLinePaint);
+			//canvas.drawLine(touchDownX, mCanvasHeight/2,mCanvasWidth/2, mCanvasHeight/2, mLinePaint);
+
 			mLinePaint.setARGB(255, 0, 255, 0);
-			canvas.drawCircle(mCanvasWidth/2,mCanvasHeight/2, mCanvasWidth/2, mLinePaint);
+			canvas.drawCircle(mXCenter,mYCenter, mXCenter, mLinePaint);
 
 			mLinePaint.setARGB(255, 0, 0, 0);
-			canvas.drawCircle(mCanvasWidth/2, mCanvasHeight/2, (mCanvasWidth/2) - 30, mLinePaint);
+			canvas.drawCircle(mXCenter, mYCenter, mXCenter - 30, mLinePaint);
+			
+			mLinePaint.setARGB(255, 255, 255, 255);
+			int b = (int) angleFromPoint(touchDownX,touchDownY,mCanvasWidth,mCanvasHeight);
+			canvas.drawText("lambda="+b,mXCenter, mYCenter+10, mLinePaint);
+			canvas.drawText(applicationList.get(Math.abs(b)%applicationList.size()),mXCenter, mYCenter, mLinePaint);
+			
+			
+			ApplicationInfo app = mApplications.get(Math.abs(b)%mApplications.size());
+			Bitmap bitmap = ((BitmapDrawable)app.icon).getBitmap();
+
+			canvas.drawBitmap(bitmap,(mCanvasWidth/2), (mCanvasHeight/2), null);
 		}
 
 		/**
@@ -135,6 +165,8 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 
 	}
 
+	
+	private List<String> applicationList = new LinkedList<String>();
 	private Context  mContext 	   ;
 	private Vibrator vibrator;
 	private org.tabbylauncher.Rotor.AnimationThread thread;
@@ -148,6 +180,7 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 	private boolean inversion;
 	private double rotation;
 	private boolean refresh;
+	private ArrayList<ApplicationInfo> mApplications;
 
 
 	/*
@@ -162,7 +195,13 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 	public Rotor(Context context, AttributeSet attrs) {
 		super(context, attrs);
 
+		loadApplications(true);
+		
+		for(int i = 0; i<100;i++)
+		  applicationList.add("string["+i+"]");
 
+//		context.getPackageManager();
+		
 		mContext = context;
 
 		// register our interest in hearing about changes to our surface
@@ -255,6 +294,8 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 			double a = angleFromPoint(prevX,prevY,thread.mCanvasWidth,thread.mCanvasHeight);
 			double b = angleFromPoint(touchDownX,touchDownY,thread.mCanvasWidth,thread.mCanvasHeight);
 
+			
+			
 			double lambda2 = a-b;
 
 			if((lambda2<0 && lambda > 0 )||(lambda2>0 && lambda < 0 )){
@@ -290,4 +331,40 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 		return  (int) Math.toDegrees(r);
 	}
 
+	
+	 private  void loadApplications(boolean isLaunching) {
+
+	    	PackageManager manager = getContext().getPackageManager();
+
+	        Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
+	        mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+
+	        final List<ResolveInfo> apps = manager.queryIntentActivities(mainIntent, 0);
+	        Collections.sort(apps, new ResolveInfo.DisplayNameComparator(manager));
+
+	        if (apps != null) {
+	            final int count = apps.size();
+
+	            if (mApplications == null) {
+	                mApplications = new ArrayList<ApplicationInfo>(count);
+	            }
+	            mApplications.clear();
+
+	            for (int i = 0; i < count; i++) {
+	                ApplicationInfo application = new ApplicationInfo();
+	                ResolveInfo info = apps.get(i);
+
+	                application.title = info.loadLabel(manager);
+	                application.setActivity(new ComponentName(
+	                        info.activityInfo.applicationInfo.packageName,
+	                        info.activityInfo.name),
+	                        Intent.FLAG_ACTIVITY_NEW_TASK
+	                        | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+	                application.icon = info.activityInfo.loadIcon(manager);
+
+	                mApplications.add(application);
+	            }
+	        }
+	    }
+	
 }

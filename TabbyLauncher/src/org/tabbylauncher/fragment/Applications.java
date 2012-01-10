@@ -81,7 +81,7 @@ public class Applications extends Fragment {
         getActivity().registerReceiver(mApplicationsReceiver, filter);
     }
     
-    private void loadApplications(boolean isLaunching) {
+    private  void loadApplications(boolean isLaunching) {
 
     	PackageManager manager = getActivity().getPackageManager();
 
