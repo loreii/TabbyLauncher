@@ -92,16 +92,24 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 		 * Make the drawing
 		 * */
 		private void doDraw(Canvas canvas) {
+			
+			mLinePaint.setARGB(255, 0, 0,0);
+			canvas.drawRect(0, 0, mCanvasWidth, mCanvasHeight, mLinePaint);
 
 			mLinePaint.setARGB(255, 0, 0, 255);
 			canvas.drawCircle(touchDownX, touchDownY, 20, mLinePaint);
-			mLinePaint.setARGB(255, 255, 0, 0);
-			canvas.drawText("("+lambda+")",20, 20, mLinePaint);
-			mLinePaint.setARGB(255, 0, 0, 255);
-			canvas.drawLine(touchDownX, touchDownY,mCanvasWidth/2, mCanvasHeight/2, mLinePaint);
-			canvas.drawLine(touchDownX, touchDownY,touchDownX, mCanvasHeight/2, mLinePaint);
-			canvas.drawLine(touchDownX, mCanvasHeight/2,mCanvasWidth/2, mCanvasHeight/2, mLinePaint);
+			// Ê Ê Ê Ê Ê ÊmLinePaint.setARGB(255, 255, 0, 0);
+			// Ê Ê Ê Ê Ê Êcanvas.drawText("##("+lambda+")",20, 20, mLinePaint);
+			// Ê Ê Ê Ê Ê ÊmLinePaint.setARGB(255, 0, 0, 255);
+			// Ê Ê Ê Ê Ê Êcanvas.drawLine(touchDownX, touchDownY,mCanvasWidth/2, mCanvasHeight/2, mLinePaint);
+			// Ê Ê Ê Ê Ê Êcanvas.drawLine(touchDownX, touchDownY,touchDownX, mCanvasHeight/2, mLinePaint);
+			// Ê Ê Ê Ê Ê Êcanvas.drawLine(touchDownX, mCanvasHeight/2,mCanvasWidth/2, mCanvasHeight/2, mLinePaint);
+			// Ê Ê Ê Ê Ê Ê
+			mLinePaint.setARGB(255, 0, 255, 0);
+			canvas.drawCircle(mCanvasWidth/2,mCanvasHeight/2, mCanvasWidth/2, mLinePaint);
 
+			mLinePaint.setARGB(255, 0, 0, 0);
+			canvas.drawCircle(mCanvasWidth/2, mCanvasHeight/2, (mCanvasWidth/2) - 30, mLinePaint);
 		}
 
 		/**
@@ -183,8 +191,8 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width,
 			int height) {
-		// TODO Auto-generated method stub
 
+			thread.setSurfaceSize(width, height);
 	}
 
 
@@ -250,7 +258,7 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 			double lambda2 = a-b;
 
 			if((lambda2<0 && lambda > 0 )||(lambda2>0 && lambda < 0 )){
-				vibrator.vibrate(202);
+//				vibrator.vibrate(202);
 				inversion=true;
 			}else{
 				inversion=false;
