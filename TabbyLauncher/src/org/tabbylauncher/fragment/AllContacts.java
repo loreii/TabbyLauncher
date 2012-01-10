@@ -4,7 +4,7 @@ import org.tabbylauncher.R;
 
 import android.database.Cursor;
 import android.os.Bundle;
-import android.provider.Contacts;
+import android.provider.ContactsContract;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -22,7 +22,7 @@ public class AllContacts extends ListFragment implements LoaderManager.LoaderCal
         
         mAdapter = new SimpleCursorAdapter(getActivity(),
 				R.layout.image_text_element, null,
-				new String[] { Contacts.People.DISPLAY_NAME },
+				new String[] { ContactsContract.Contacts.DISPLAY_NAME },
 				new int[] { R.id.element },
 				CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 
@@ -32,7 +32,7 @@ public class AllContacts extends ListFragment implements LoaderManager.LoaderCal
     }
 	@Override
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
-		return new CursorLoader(getActivity(), Contacts.People.CONTENT_URI, null,
+		return new CursorLoader(getActivity(), ContactsContract.Contacts.CONTENT_URI, null,
 				null, null, null);
 	}
 
