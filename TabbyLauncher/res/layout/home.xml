@@ -3,13 +3,22 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
-    
-    <GridView android:id="@+id/all_apps"
-        android:numColumns="auto_fit"
-        android:columnWidth="78dp"
-        android:stretchMode="spacingWidth"
-        android:layout_height="fill_parent"
+     <org.tabbylauncher.component.HorizontalPager
+        android:id="@+id/horizontal_pager"
         android:layout_width="fill_parent"
-        android:visibility="visible" />
-
+        android:layout_height="0px"
+        android:layout_weight="1" >
+    
+        <fragment
+            android:id="@+id/app"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:name="org.tabbylauncher.fragment.Applications" />
+        <fragment
+            android:id="@+id/contact"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:name="org.tabbylauncher.fragment.AllContacts" />    
+    </org.tabbylauncher.component.HorizontalPager>
+    
 </LinearLayout>

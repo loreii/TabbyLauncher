@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/all_apps"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:columnWidth="78dp"
+    android:numColumns="auto_fit"
+    android:stretchMode="spacingWidth"
+    android:visibility="visible" />
