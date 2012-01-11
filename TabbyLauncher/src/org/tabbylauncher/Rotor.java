@@ -2,7 +2,6 @@ package org.tabbylauncher;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 import android.content.ComponentName;
@@ -11,14 +10,12 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.RectF;
 import android.graphics.Paint.Style;
+import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -28,6 +25,8 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
+import android.view.View.OnClickListener;
 
 public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 
@@ -260,7 +259,7 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 		LoadFavorites(context);
 
 		mContext = context;
-
+		
 		// register our interest in hearing about changes to our surface
 		SurfaceHolder holder = getHolder();
 		holder.addCallback(this);
@@ -448,5 +447,7 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 			}
 		}
 	}
+
+
 
 }

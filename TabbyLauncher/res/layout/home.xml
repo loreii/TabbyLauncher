@@ -12,9 +12,8 @@
 
     <org.tabbylauncher.Rotor
         android:id="@+id/rotor"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="3" />
+        android:layout_width="320dp"
+        android:layout_height="320dp" />
 
     <TextView
         android:layout_width="fill_parent"
