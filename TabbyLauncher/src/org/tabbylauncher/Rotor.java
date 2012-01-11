@@ -163,9 +163,9 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 			int b = (int) angleFromPoint(touchDownX,touchDownY,mCanvasWidth,mCanvasHeight);
 			canvas.drawText("lambda="+b,mCenterX, mCenterY+10, mLinePaint);
 			canvas.drawText(applicationList.get(Math.abs(b)%applicationList.size()),mCenterX, mCenterY, mLinePaint);
-
-
-			ApplicationInfo app = mApplications.get(Math.abs(b)%mApplications.size());			
+			
+			
+			ApplicationInfo app = mApplications.get(Math.abs(b)%mApplications.size());
 
 			Bitmap bitmap = ((BitmapDrawable)app.icon).getBitmap();
 
