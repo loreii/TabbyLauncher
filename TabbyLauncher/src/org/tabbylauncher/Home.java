@@ -14,8 +14,6 @@ public class Home extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.home);
 
-//		HorizontalPager pager = (HorizontalPager) findViewById(R.id.horizontal_pager);
-
 	}
 
 

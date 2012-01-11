@@ -36,6 +36,10 @@ public class ApplicationInfo {
     public Intent intent;
 
     /**
+     * The intent used to start the application.
+     */
+    public String pakage;
+    /**
      * The application icon.
      */
     public Drawable icon;
