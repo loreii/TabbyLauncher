@@ -13,7 +13,9 @@ import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -138,8 +140,17 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 			
 			ApplicationInfo app = mApplications.get(Math.abs(b)%mApplications.size());
 			Bitmap bitmap = ((BitmapDrawable)app.icon).getBitmap();
+			Matrix mtx = new Matrix();
 
-			canvas.drawBitmap(bitmap,(mCanvasWidth/2), (mCanvasHeight/2), null);
+			RectF drawableRect = new RectF(0, 0, bitmap.getWidth(), bitmap.getHeight());
+			RectF viewRect = new RectF(0, 0, 200, 200);
+			mtx.setRectToRect(drawableRect, viewRect, Matrix.ScaleToFit.CENTER);
+			
+			Bitmap scaledBMP = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), mtx, true);
+			int bitmapWidth  = (scaledBMP.getWidth()>>1);
+			int bitmapHeight = (scaledBMP.getHeight()>>1);
+
+			canvas.drawBitmap(scaledBMP,(mCanvasWidth/2)-bitmapWidth, (mCanvasHeight/2)-bitmapHeight, null);
 		}
 
 		/**
