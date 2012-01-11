@@ -53,6 +53,10 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 		private int mCircleRed=0;
 		private int mCircleBlue=0;
 		private int mCircleGreen=255;
+		private Paint mDebugLinePaint;
+
+		//enable debug info
+		private boolean debug=true;
 
 		public AnimationThread(SurfaceHolder surfaceHolder, Context context,
 				Handler handler) {
@@ -131,6 +135,7 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 		 * Make the drawing
 		 * */
 		private void doDraw(Canvas canvas) {
+			
 			canvas.save();
 
 			mLinePaint.setARGB(255, 0, 0,0);
@@ -139,13 +144,16 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 			if (mTouchAlpha>0) {
 				mTouchAlpha-=10;
 				if (mTouchAlpha>0)
-				mLinePaint.setARGB(mTouchAlpha, 0, 0, 255);
+					mLinePaint.setARGB(mTouchAlpha, 0, 0, 255);
 				canvas.drawCircle(touchDownX, touchDownY, 20, mLinePaint);
 			}
+			
+			if(debug)
+				debugGrid(canvas);
+			
+			
 			//mLinePaint.setARGB(255, 255, 0, 0);
 			//canvas.drawText("##("+lambda+")",20, 20, mLinePaint);
-
-
 
 			//mLinePaint.setARGB(255, 0, 0, 255);
 			//canvas.drawLine(touchDownX, touchDownY,mCanvasWidth/2, mCanvasHeight/2, mLinePaint);
@@ -158,15 +166,15 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 			canvas.drawCircle(mCenterX, mCenterY, mCircleRadius, mLinePaint);
 			mLinePaint.setStyle(Style.FILL);
 
-//			mLinePaint.setARGB(255, 0, 0, 0);
-//			canvas.drawCircle(mXCenter, mYCenter, mXCenter - 30, mLinePaint);
+			//			mLinePaint.setARGB(255, 0, 0, 0);
+			//			canvas.drawCircle(mXCenter, mYCenter, mXCenter - 30, mLinePaint);
 
 			mLinePaint.setARGB(255, 255, 255, 255);
 			int b = (int) angleFromPoint(touchDownX,touchDownY,mCanvasWidth,mCanvasHeight);
 			canvas.drawText("lambda="+b,mCenterX, mCenterY+10, mLinePaint);
 			canvas.drawText(applicationList.get(Math.abs(b)%applicationList.size()),mCenterX, mCenterY, mLinePaint);
-			
-			
+
+
 			ApplicationInfo app = mApplications.get(Math.abs(b)%mApplications.size());
 
 			Bitmap bitmap = ((BitmapDrawable)app.icon).getBitmap();
@@ -175,20 +183,49 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 			RectF drawableRect = new RectF(0, 0, bitmap.getWidth(), bitmap.getHeight());
 			RectF viewRect = new RectF(0, 0, 200, 200);
 			mtx.setRectToRect(drawableRect, viewRect, Matrix.ScaleToFit.CENTER);
-			
+
 			Bitmap scaledBMP = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), mtx, true);
 			int bitmapWidth  = (scaledBMP.getWidth()>>1);
 			int bitmapHeight = (scaledBMP.getHeight()>>1);
 
 			canvas.drawBitmap(scaledBMP,(mCanvasWidth/2)-bitmapWidth, (mCanvasHeight/2)-bitmapHeight, null);
+
 			canvas.restore();
 		}
+
+		private void debugGrid(Canvas canvas) {
+			// Initialize paints for finger hit
+			mDebugLinePaint = new Paint();
+			mDebugLinePaint.setAntiAlias(true);
+			mDebugLinePaint.setARGB(255, 255, 0, 0);
+			mDebugLinePaint.setTextSize(15f);
+			
+			for(int i = 0;i<mCanvasHeight;i+=50){
+				canvas.drawText("-> " + i, 0, i,  mDebugLinePaint);
+				canvas.drawLine(0, i, mCanvasWidth, i, mDebugLinePaint);
+			}
+			
+			for(int i = 0;i<mCanvasWidth;i+=50){
+				canvas.drawText("-> " + i,i, 20,  mDebugLinePaint);
+				canvas.drawLine(i, 0, i, mCanvasHeight, mDebugLinePaint);
+			}
+
+		}
+
+
+
+		private void runApplication() {
+
+
+		}
+
+
 
 		/**
 		 * Update physics animation
 		 * */
 		private void updatePhysics() {
-			// TODO Auto-generated method stub
+
 
 		}
 
@@ -199,10 +236,10 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 				mCanvasWidth = width;
 				mCanvasHeight = height;
 				mCenterX=width>>1;
-				mCenterY=height>>1;
-				mCircleExtRadius = Math.min(width, height)/2.0f;
-				mCircleWidth = (int)mCircleExtRadius/3;
-				mCircleRadius = mCircleExtRadius-(mCircleWidth>>1);
+			mCenterY=height>>1;
+			mCircleExtRadius = Math.min(width, height)/2.0f;
+			mCircleWidth = (int)mCircleExtRadius/3;
+			mCircleRadius = mCircleExtRadius-(mCircleWidth>>1);
 			}
 
 		}
