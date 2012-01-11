@@ -112,18 +112,24 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 
 
 		private void angleIcon(Canvas canvas) {
-			
-			
-			for(int i=0; i<mFavorites.size(); i++){
-				ApplicationInfo applicationInfo = mFavorites.get(i);
-//				if("com.sonyericsson.android.socialphonebook".equals(applicationInfo.pakage)){
-					Bitmap bitmap1 = ((BitmapDrawable)applicationInfo.icon).getBitmap();
-					canvas.drawBitmap(bitmap1, 10, (mCanvasHeight/4)-40, null);
-//				} else if("com.sonyericsson.conversations".equals(applicationInfo.pakage)){
-//					Bitmap bitmap1 = ((BitmapDrawable)applicationInfo.icon).getBitmap();
-//					canvas.drawBitmap(bitmap1, mCanvasWidth-bitmap1.getWidth()-10, (mCanvasHeight/4)-40, null);
-//				} 
-			}
+
+
+			ApplicationInfo applicationInfo = mFavorites.get(0);
+			Bitmap bitmap = ((BitmapDrawable)applicationInfo.icon).getBitmap();
+			canvas.drawBitmap(bitmap, 10, 10, null);
+
+			applicationInfo = mFavorites.get(1);
+			bitmap = ((BitmapDrawable)applicationInfo.icon).getBitmap();
+			canvas.drawBitmap(bitmap, mCanvasWidth-bitmap.getWidth(), 10, null);
+
+			applicationInfo = mFavorites.get(2);
+			bitmap = ((BitmapDrawable)applicationInfo.icon).getBitmap();
+			canvas.drawBitmap(bitmap, 10, mCanvasHeight-bitmap.getHeight(), null);
+
+			applicationInfo = mFavorites.get(3);
+			bitmap = ((BitmapDrawable)applicationInfo.icon).getBitmap();
+			canvas.drawBitmap(bitmap, mCanvasWidth-bitmap.getWidth(), mCanvasHeight-bitmap.getHeight(), null);
+
 		}
 
 
@@ -140,7 +146,7 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 			if (mTouchAlpha>0) {
 				mTouchAlpha-=10;
 				if (mTouchAlpha>0)
-				mLinePaint.setARGB(mTouchAlpha, 0, 0, 255);
+					mLinePaint.setARGB(mTouchAlpha, 0, 0, 255);
 				canvas.drawCircle(touchDownX, touchDownY, 20, mLinePaint);
 			}
 			//mLinePaint.setARGB(255, 255, 0, 0);
@@ -159,12 +165,12 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 			canvas.drawCircle(mCenterX, mCenterY, mCircleRadius, mLinePaint);
 			mLinePaint.setStyle(Style.FILL);
 
-//			mLinePaint.setARGB(255, 0, 0, 0);
-//			canvas.drawCircle(mXCenter, mYCenter, mXCenter - 30, mLinePaint);
+			//			mLinePaint.setARGB(255, 0, 0, 0);
+			//			canvas.drawCircle(mXCenter, mYCenter, mXCenter - 30, mLinePaint);
 
 			mLinePaint.setARGB(255, 255, 255, 255);
 			int b = (int) angleFromPoint(touchDownX,touchDownY,mCanvasWidth,mCanvasHeight);
-			
+
 			ApplicationInfo app = mApplications.get(Math.abs(b)%mApplications.size());
 
 			Bitmap bitmap = ((BitmapDrawable)app.icon).getBitmap();
@@ -173,7 +179,7 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 			RectF drawableRect = new RectF(0, 0, bitmap.getWidth(), bitmap.getHeight());
 			RectF viewRect = new RectF(0, 0, 200, 200);
 			mtx.setRectToRect(drawableRect, viewRect, Matrix.ScaleToFit.CENTER);
-			
+
 			Bitmap scaledBMP = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), mtx, true);
 			int bitmapWidth  = (scaledBMP.getWidth()>>1);
 			int bitmapHeight = (scaledBMP.getHeight()>>1);
@@ -252,7 +258,7 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 
 		LoadApplications(true);
 		LoadFavorites(context);
-		
+
 		mContext = context;
 
 		// register our interest in hearing about changes to our surface
@@ -276,12 +282,24 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 	private void LoadFavorites(Context context) {
 
 		if(mFavorites==null){
-			mFavorites = new ArrayList<ApplicationInfo>(1);
+			mFavorites = new ArrayList<ApplicationInfo>(4);
 		}
 		mFavorites.clear();
 		ApplicationInfo applicationInfo = new ApplicationInfo();
-		applicationInfo.icon = context.getResources().getDrawable(R.drawable.call_contact);
+		applicationInfo.icon = context.getResources().getDrawable(android.R.drawable.ic_menu_call);
 		applicationInfo.title = "Phone";
+		mFavorites.add(applicationInfo);
+		applicationInfo = new ApplicationInfo();
+		applicationInfo.icon = context.getResources().getDrawable(android.R.drawable.ic_menu_send);
+		applicationInfo.title = "Message";
+		mFavorites.add(applicationInfo);
+		applicationInfo = new ApplicationInfo();
+		applicationInfo.icon = context.getResources().getDrawable(android.R.drawable.ic_menu_my_calendar);
+		applicationInfo.title = "Calendar";
+		mFavorites.add(applicationInfo);
+		applicationInfo = new ApplicationInfo();
+		applicationInfo.icon = context.getResources().getDrawable(android.R.drawable.ic_menu_agenda);
+		applicationInfo.title = "Agenda";
 		mFavorites.add(applicationInfo);
 	}
 
