@@ -14,6 +14,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -41,10 +42,15 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 		private Context 	  mContext;
 
 		//TODO handle start/stop
-		private boolean 	 mRun=true;
-		private int mCanvasWidth;
-		private int mCanvasHeight;
+		private boolean 	 mRun=true;		
+		private float mCircleRadius;
+		private float mCircleExtRadius;
+		private int mCircleWidth;
 		private Paint mLinePaint;
+		private int mTouchAlpha;
+		private int mCircleRed=0;
+		private int mCircleBlue=0;
+		private int mCircleGreen=255;
 
 		public AnimationThread(SurfaceHolder surfaceHolder, Context context,
 				Handler handler) {
@@ -59,7 +65,6 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 			mLinePaint.setAntiAlias(true);
 			mLinePaint.setARGB(255, 0, 255, 0);
 			mLinePaint.setTextSize(15f);
-
 		}
 
 
@@ -104,16 +109,17 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 		 * Make the drawing
 		 * */
 		private void doDraw(Canvas canvas) {
-			
-			//todo move out
-			int mXCenter = mCanvasWidth/2 ;
-			int mYCenter = mCanvasHeight/2;
+			canvas.save();
 			
 			mLinePaint.setARGB(255, 0, 0,0);
 			canvas.drawRect(0, 0, mCanvasWidth, mCanvasHeight, mLinePaint);
 
-			mLinePaint.setARGB(255, 0, 0, 255);
-			canvas.drawCircle(touchDownX, touchDownY, 20, mLinePaint);
+			if (mTouchAlpha>0) {
+				mTouchAlpha-=10;
+				if (mTouchAlpha>0)
+				mLinePaint.setARGB(mTouchAlpha, 0, 0, 255);
+				canvas.drawCircle(touchDownX, touchDownY, 20, mLinePaint);
+			}
 			//mLinePaint.setARGB(255, 255, 0, 0);
 			//canvas.drawText("##("+lambda+")",20, 20, mLinePaint);
 			
@@ -124,22 +130,26 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 			//canvas.drawLine(touchDownX, touchDownY,touchDownX, mCanvasHeight/2, mLinePaint);
 			//canvas.drawLine(touchDownX, mCanvasHeight/2,mCanvasWidth/2, mCanvasHeight/2, mLinePaint);
 
-			mLinePaint.setARGB(255, 0, 255, 0);
-			canvas.drawCircle(mXCenter,mYCenter, mXCenter, mLinePaint);
+			mLinePaint.setARGB(255, mCircleRed, mCircleGreen, mCircleBlue);
+			mLinePaint.setStyle(Style.STROKE);
+			mLinePaint.setStrokeWidth(mCircleWidth);
+			canvas.drawCircle(mCenterX, mCenterY, mCircleRadius, mLinePaint);
+			mLinePaint.setStyle(Style.FILL);
 
-			mLinePaint.setARGB(255, 0, 0, 0);
-			canvas.drawCircle(mXCenter, mYCenter, mXCenter - 30, mLinePaint);
+//			mLinePaint.setARGB(255, 0, 0, 0);
+//			canvas.drawCircle(mXCenter, mYCenter, mXCenter - 30, mLinePaint);
 			
 			mLinePaint.setARGB(255, 255, 255, 255);
 			int b = (int) angleFromPoint(touchDownX,touchDownY,mCanvasWidth,mCanvasHeight);
-			canvas.drawText("lambda="+b,mXCenter, mYCenter+10, mLinePaint);
-			canvas.drawText(applicationList.get(Math.abs(b)%applicationList.size()),mXCenter, mYCenter, mLinePaint);
+			canvas.drawText("lambda="+b,mCenterX, mCenterY+10, mLinePaint);
+			canvas.drawText(applicationList.get(Math.abs(b)%applicationList.size()),mCenterX, mCenterY, mLinePaint);
 			
 			
 			ApplicationInfo app = mApplications.get(Math.abs(b)%mApplications.size());
 			Bitmap bitmap = ((BitmapDrawable)app.icon).getBitmap();
 
 			canvas.drawBitmap(bitmap,(mCanvasWidth/2), (mCanvasHeight/2), null);
+			canvas.restore();
 		}
 
 		/**
@@ -156,12 +166,23 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 			synchronized (mSurfaceHolder) {
 				mCanvasWidth = width;
 				mCanvasHeight = height;
-
+				mCenterX=width>>1;
+				mCenterY=height>>1;
+				mCircleExtRadius = Math.min(width, height)/2.0f;
+				mCircleWidth = (int)mCircleExtRadius/3;
+				mCircleRadius = mCircleExtRadius-(mCircleWidth>>1);
 			}
 
 		}
 
-
+		protected void onTouch() {
+			synchronized (mSurfaceHolder) {
+				mTouchAlpha=255;
+				mCircleRed=mCircleRed>2?mCircleRed-2:255;
+				mCircleGreen=mCircleGreen>1?mCircleGreen-1:255;
+				mCircleBlue=mCircleBlue>4?mCircleBlue-4:255;
+			}
+		}
 
 	}
 
@@ -170,17 +191,21 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 	private Context  mContext 	   ;
 	private Vibrator vibrator;
 	private org.tabbylauncher.Rotor.AnimationThread thread;
-	private float prevX;
-	private float prevY;
+	private int prevX;
+	private int prevY;
 	private double oldLambda;
 	private double lambda;
-	private float touchDownX;
-	private float touchDownY;
+	private int touchDownX;
+	private int touchDownY;
 	private long downtime;
 	private boolean inversion;
 	private double rotation;
 	private boolean refresh;
 	private ArrayList<ApplicationInfo> mApplications;
+	private int mCanvasWidth;
+	private int mCanvasHeight;
+	private int mCenterX;
+	private int mCenterY;
 
 
 	/*
@@ -268,8 +293,8 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 			case MotionEvent.ACTION_DOWN:
 
 				Log.d("DEBUG", "get action down");
-				prevX=event.getX();
-				prevY=event.getY();
+				prevX=(int)event.getX();
+				prevY=(int)event.getY();
 				i=0;
 				break;
 			case MotionEvent.ACTION_UP:
@@ -285,14 +310,14 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 
 
 			//update the current touch location
-			touchDownX= event.getX();
-			touchDownY= event.getY();
+			touchDownX= (int)event.getX();
+			touchDownY= (int)event.getY();
 
 			downtime=event.getDownTime();
 
 
-			double a = angleFromPoint(prevX,prevY,thread.mCanvasWidth,thread.mCanvasHeight);
-			double b = angleFromPoint(touchDownX,touchDownY,thread.mCanvasWidth,thread.mCanvasHeight);
+			double a = angleFromPoint(prevX,prevY,mCanvasWidth,mCanvasHeight);
+			double b = angleFromPoint(touchDownX,touchDownY,mCanvasWidth,mCanvasHeight);
 
 			
 			
@@ -319,15 +344,15 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 			}
 			prevX=touchDownX;
 			prevY=touchDownY;
-
+			thread.onTouch();
 		}
 
 
 		return true;
 	}    
 
-	private static  double angleFromPoint(float x,float y, int width, int height) {
-		double r = Math.atan2(x - width / 2, height / 2 - y);
+	private static double angleFromPoint(int x, int y, int width, int height) {
+		double r = Math.atan2(x - (width >>1 ), (height >> 1) - y);
 		return  (int) Math.toDegrees(r);
 	}
 
