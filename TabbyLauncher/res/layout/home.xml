@@ -9,23 +9,23 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <!-- don't used in this moment -->
-    <org.tabbylauncher.component.HorizontalPager
-        android:id="@+id/horizontal_pager"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
+<!--     don't used in this moment -->
+<!--     <org.tabbylauncher.component.HorizontalPager -->
+<!--         android:id="@+id/horizontal_pager" -->
+<!--         android:layout_width="fill_parent" -->
+<!--         android:layout_height="fill_parent" > -->
 
-        <fragment
-            android:id="@+id/app"
-            android:name="org.tabbylauncher.fragment.Applications"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent" />
+<!--         <fragment -->
+<!--             android:id="@+id/app" -->
+<!--             android:name="org.tabbylauncher.fragment.Applications" -->
+<!--             android:layout_width="fill_parent" -->
+<!--             android:layout_height="fill_parent" /> -->
 
-        <fragment
-            android:id="@+id/contact"
-            android:name="org.tabbylauncher.fragment.AllContacts"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent" />
-    </org.tabbylauncher.component.HorizontalPager>
+<!--         <fragment -->
+<!--             android:id="@+id/contact" -->
+<!--             android:name="org.tabbylauncher.fragment.AllContacts" -->
+<!--             android:layout_width="fill_parent" -->
+<!--             android:layout_height="fill_parent" /> -->
+<!--     </org.tabbylauncher.component.HorizontalPager> -->
 
 </LinearLayout>

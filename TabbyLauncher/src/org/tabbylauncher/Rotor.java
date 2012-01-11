@@ -16,6 +16,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -109,17 +110,17 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 
 
 		private void angleIcon(Canvas canvas) {
-			for(int i=0; i<mApplications.size(); i++){
-				ApplicationInfo applicationInfo = mApplications.get(i);
-				Log.i("", "----_> applicationInfo "+applicationInfo.title+" pakage "+applicationInfo.pakage);
-
-				if("com.sonyericsson.android.socialphonebook".equals(applicationInfo.pakage)){
+			
+			
+			for(int i=0; i<mFavorites.size(); i++){
+				ApplicationInfo applicationInfo = mFavorites.get(i);
+//				if("com.sonyericsson.android.socialphonebook".equals(applicationInfo.pakage)){
 					Bitmap bitmap1 = ((BitmapDrawable)applicationInfo.icon).getBitmap();
 					canvas.drawBitmap(bitmap1, 10, (mCanvasHeight/4)-40, null);
-				} else if("com.sonyericsson.conversations".equals(applicationInfo.pakage)){
-					Bitmap bitmap1 = ((BitmapDrawable)applicationInfo.icon).getBitmap();
-					canvas.drawBitmap(bitmap1, mCanvasWidth-bitmap1.getWidth()-10, (mCanvasHeight/4)-40, null);
-				} 
+//				} else if("com.sonyericsson.conversations".equals(applicationInfo.pakage)){
+//					Bitmap bitmap1 = ((BitmapDrawable)applicationInfo.icon).getBitmap();
+//					canvas.drawBitmap(bitmap1, mCanvasWidth-bitmap1.getWidth()-10, (mCanvasHeight/4)-40, null);
+//				} 
 			}
 		}
 
@@ -161,9 +162,6 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 
 			mLinePaint.setARGB(255, 255, 255, 255);
 			int b = (int) angleFromPoint(touchDownX,touchDownY,mCanvasWidth,mCanvasHeight);
-			canvas.drawText("lambda="+b,mCenterX, mCenterY+10, mLinePaint);
-			canvas.drawText(applicationList.get(Math.abs(b)%applicationList.size()),mCenterX, mCenterY, mLinePaint);
-			
 			
 			ApplicationInfo app = mApplications.get(Math.abs(b)%mApplications.size());
 
@@ -208,8 +206,7 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 	}
 
 
-	private List<String> applicationList = new LinkedList<String>();
-	private Context  mContext 	   ;
+	private Context  mContext;
 	private Vibrator vibrator;
 	private org.tabbylauncher.Rotor.AnimationThread thread;
 	private int prevX;
@@ -223,6 +220,7 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 	private double rotation;
 	private boolean refresh;
 	private ArrayList<ApplicationInfo> mApplications;
+	private ArrayList<ApplicationInfo> mFavorites;
 	private int mCanvasWidth;
 	private int mCanvasHeight;
 	private int mCenterX;
@@ -241,13 +239,9 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 	public Rotor(Context context, AttributeSet attrs) {
 		super(context, attrs);
 
-		loadApplications(true);
-
-		for(int i = 0; i<100;i++)
-			applicationList.add("string["+i+"]");
-
-		//		context.getPackageManager();
-
+		LoadApplications(true);
+		LoadFavorites(context);
+		
 		mContext = context;
 
 		// register our interest in hearing about changes to our surface
@@ -265,6 +259,19 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 
 		setFocusable(true); // make sure we get key events
 
+	}
+
+
+	private void LoadFavorites(Context context) {
+
+		if(mFavorites==null){
+			mFavorites = new ArrayList<ApplicationInfo>(1);
+		}
+		mFavorites.clear();
+		ApplicationInfo applicationInfo = new ApplicationInfo();
+		applicationInfo.icon = context.getResources().getDrawable(R.drawable.call_contact);
+		applicationInfo.title = "Phone";
+		mFavorites.add(applicationInfo);
 	}
 
 
@@ -378,7 +385,7 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 	}
 
 
-	private  void loadApplications(boolean isLaunching) {
+	private  void LoadApplications(boolean isLaunching) {
 
 		PackageManager manager = getContext().getPackageManager();
 
