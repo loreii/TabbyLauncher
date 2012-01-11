@@ -4,28 +4,43 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="TEXT TOP" />
+
     <org.tabbylauncher.Rotor
         android:id="@+id/rotor"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3" />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="TEXT BOTTON" />
 
     <!-- don't used in this moment -->
-    <org.tabbylauncher.component.HorizontalPager
-        android:id="@+id/horizontal_pager"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
+    <!-- <org.tabbylauncher.component.HorizontalPager -->
+    <!-- android:id="@+id/horizontal_pager" -->
+    <!-- android:layout_width="fill_parent" -->
+    <!-- android:layout_height="fill_parent" > -->
 
-        <fragment
-            android:id="@+id/app"
-            android:name="org.tabbylauncher.fragment.Applications"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent" />
 
-        <fragment
-            android:id="@+id/contact"
-            android:name="org.tabbylauncher.fragment.AllContacts"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent" />
-    </org.tabbylauncher.component.HorizontalPager>
+    <!-- <fragment -->
+    <!-- android:id="@+id/app" -->
+    <!-- android:name="org.tabbylauncher.fragment.Applications" -->
+    <!-- android:layout_width="fill_parent" -->
+    <!-- android:layout_height="fill_parent" /> -->
+
+
+    <!-- <fragment -->
+    <!-- android:id="@+id/contact" -->
+    <!-- android:name="org.tabbylauncher.fragment.AllContacts" -->
+    <!-- android:layout_width="fill_parent" -->
+    <!-- android:layout_height="fill_parent" /> -->
+    <!-- </org.tabbylauncher.component.HorizontalPager> -->
 
 </LinearLayout>
