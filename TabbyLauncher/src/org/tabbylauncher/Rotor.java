@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Vibrator;
+import android.provider.ContactsContract;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -312,11 +313,12 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 		ApplicationInfo applicationInfo = new ApplicationInfo();
 		applicationInfo.icon = context.getResources().getDrawable(android.R.drawable.ic_menu_call);
 		applicationInfo.title = "Phone";
-		applicationInfo.intent = new Intent(Intent.ACTION_CALL);
+		applicationInfo.intent = new Intent(Intent.ACTION_DIAL);
 		mFavorites.add(applicationInfo);
 		applicationInfo = new ApplicationInfo();
 		applicationInfo.icon = context.getResources().getDrawable(android.R.drawable.ic_menu_send);
 		applicationInfo.title = "Message";
+		applicationInfo.intent = new Intent(Intent.ACTION_VIEW, ContactsContract.Contacts.CONTENT_URI);
 		mFavorites.add(applicationInfo);
 		applicationInfo = new ApplicationInfo();
 		applicationInfo.icon = context.getResources().getDrawable(android.R.drawable.ic_menu_my_calendar);
@@ -372,8 +374,11 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 		synchronized ( event ){
 			int ex=(int)event.getX()-mCenterX;
 			int ey=(int)event.getY()-mCenterY;
+			int ed=(ex*ex+ey*ey);
 			int rq=((int)thread.mCircleIntRadius)*((int)thread.mCircleIntRadius);
-			boolean inCircle = (ex*ex+ey*ey)<rq;
+			int extrq=((int)thread.mCircleExtRadius)*((int)thread.mCircleExtRadius);
+			boolean inInnerCircle = ed<rq;
+			boolean outOfCircle = ed>extrq;
 
 			int i = -1;
 			switch (event.getActionMasked()){
@@ -393,17 +398,14 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 				int x=lastDownX-mCenterX;
 				int y=lastDownY-mCenterY;
 				int rdc=x*x+y*y;
-				if (inCircle && (rdc<rq)) {
+				if (inInnerCircle && (rdc<rq)) {
 					if (mOnRotorClickListener!=null) {
 						mOnRotorClickListener.onItemClick(this, mApplications, 
 								getSelectedAppInfo(), mSelectedApp);
 					}
-				} else if (!inCircle) {
-					int extrq=(int)thread.mCircleExtRadius*(int)thread.mCircleExtRadius;
-					if (rdc>extrq) {
-						int idx = x<0?(y<0?0:3):(y<0?1:2);
-						mOnRotorClickListener.onQuadrantListener(idx, mFavorites.get(idx).intent);
-					}
+				} else if (outOfCircle) {
+					int idx = x<0?(y<0?0:3):(y<0?1:2);
+					mOnRotorClickListener.onQuadrantListener(idx, mFavorites.get(idx).intent);
 				}
 				i=1; 
 				break;
@@ -446,7 +448,7 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 			//				}
 			//			}
 
-			if (!inCircle) {
+			if (!inInnerCircle && !outOfCircle) {
 				int b = (int) angleFromPoint(touchDownX,touchDownY,mCanvasWidth,mCanvasHeight);
 				synchronized (mApplications) {
 					int oldSelected = mSelectedApp;
