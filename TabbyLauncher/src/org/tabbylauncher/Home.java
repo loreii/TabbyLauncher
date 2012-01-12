@@ -2,6 +2,7 @@ package org.tabbylauncher;
 
 import java.util.List;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.widget.TextView;
@@ -25,7 +26,17 @@ public class Home extends FragmentActivity {
 				mApplicationNameTextView.setText(appInfo.title);
 			}
 		});
+		mRotor.setOnItemClickListener(new Rotor.OnRotorClickListener() {
+			@Override
+			public void onItemClick(Rotor rotor, List<ApplicationInfo> appList,
+					ApplicationInfo appInfo, int index) {
+				startActivity(appInfo.intent);
+			}
+
+			@Override
+			public void onQuadrantListener(int idx, Intent intent) {
+				startActivity(intent);
+			}
+		});
 	}
-
-
 }
