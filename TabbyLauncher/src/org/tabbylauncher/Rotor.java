@@ -25,6 +25,8 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
+import android.view.View.OnClickListener;
 
 public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 	/*
@@ -344,7 +346,6 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 			thread.start();
 			// <-- added fix
 		}else {
-			Log.e("PUPPA", "***************************************START");
 			thread.start();
 		}
 	}
