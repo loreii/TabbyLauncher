@@ -2,25 +2,29 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <TextView
+        android:id="@+id/application_name_text_view"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:text="TEXT TOP" />
+        android:gravity="center"
+        android:textColor="#DDDDCC"
+        android:textSize="24dp"
+        android:textStyle="bold"
+        android:text="Loading..."/>
 
     <org.tabbylauncher.Rotor
         android:id="@+id/rotor"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="3" />
+        android:layout_width="320dp"
+        android:layout_height="320dp"/>
 
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:text="TEXT BOTTON" />
+        android:gravity="center"/>
 
     <!-- don't used in this moment -->
     <!-- <org.tabbylauncher.component.HorizontalPager -->

@@ -2,7 +2,6 @@ package org.tabbylauncher;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 import android.content.ComponentName;
@@ -11,14 +10,12 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.RectF;
 import android.graphics.Paint.Style;
+import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -30,9 +27,6 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
-
-
-
 	/*
 	 * ============ Update animation thread =============
 	 */
@@ -90,11 +84,14 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 				Canvas c = null;
 				try {
 					c = mSurfaceHolder.lockCanvas(null);
-
-					synchronized (mSurfaceHolder) {
-						updatePhysics();
-						doDraw(c);
-						angleIcon(c);
+					if (c!=null) {
+						synchronized (mSurfaceHolder) {
+							updatePhysics();
+							doDraw(c);
+							angleIcon(c);
+						}
+					} else {
+						mRun=false;
 					}
 				} finally {
 					// do this in a finally so that if an exception is thrown
@@ -103,6 +100,11 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 					if (c != null) {
 						mSurfaceHolder.unlockCanvasAndPost(c);
 					}
+				}
+				try {
+					sleep(50);
+				} catch (InterruptedException e) {
+					mRun=false;
 				}
 			}
 
@@ -169,22 +171,25 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 			//			canvas.drawCircle(mXCenter, mYCenter, mXCenter - 30, mLinePaint);
 
 			mLinePaint.setARGB(255, 255, 255, 255);
-			int b = (int) angleFromPoint(touchDownX,touchDownY,mCanvasWidth,mCanvasHeight);
 
-			ApplicationInfo app = mApplications.get(Math.abs(b)%mApplications.size());
+				synchronized (mApplications) {
+					if (mSelectedApp>=0) {
+						ApplicationInfo app = mApplications.get(mSelectedApp);
+						Bitmap bitmap = ((BitmapDrawable)app.icon).getBitmap();
+						Matrix mtx = new Matrix();
 
-			Bitmap bitmap = ((BitmapDrawable)app.icon).getBitmap();
-			Matrix mtx = new Matrix();
+						RectF drawableRect = new RectF(0, 0, bitmap.getWidth(), bitmap.getHeight());
+						RectF viewRect = new RectF(0, 0, 200, 200);
+						mtx.setRectToRect(drawableRect, viewRect, Matrix.ScaleToFit.CENTER);
 
-			RectF drawableRect = new RectF(0, 0, bitmap.getWidth(), bitmap.getHeight());
-			RectF viewRect = new RectF(0, 0, 200, 200);
-			mtx.setRectToRect(drawableRect, viewRect, Matrix.ScaleToFit.CENTER);
+						Bitmap scaledBMP = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), mtx, true);
+						int bitmapWidth  = (scaledBMP.getWidth()>>1);
+						int bitmapHeight = (scaledBMP.getHeight()>>1);
 
-			Bitmap scaledBMP = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), mtx, true);
-			int bitmapWidth  = (scaledBMP.getWidth()>>1);
-			int bitmapHeight = (scaledBMP.getHeight()>>1);
+						canvas.drawBitmap(scaledBMP,(mCanvasWidth/2)-bitmapWidth, (mCanvasHeight/2)-bitmapHeight, null);
+					}
+				}
 
-			canvas.drawBitmap(scaledBMP,(mCanvasWidth/2)-bitmapWidth, (mCanvasHeight/2)-bitmapHeight, null);
 			canvas.restore();
 		}
 
@@ -224,6 +229,7 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 
 
 	private Context  mContext;
+	private Handler mHandler;
 	private Vibrator vibrator;
 	private org.tabbylauncher.Rotor.AnimationThread thread;
 	private int prevX;
@@ -236,12 +242,15 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 	private boolean inversion;
 	private double rotation;
 	private boolean refresh;
-	private ArrayList<ApplicationInfo> mApplications;
+	private Thread mApplicationLoaderThread=null;
+	private ArrayList<ApplicationInfo> mApplications = new ArrayList<ApplicationInfo>();
+	private int mSelectedApp=-1;
 	private ArrayList<ApplicationInfo> mFavorites;
 	private int mCanvasWidth;
 	private int mCanvasHeight;
 	private int mCenterX;
 	private int mCenterY;
+	private OnItemSelectedListener mOnItemSelectedListener;
 
 
 	/*
@@ -250,16 +259,16 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 
 	public Rotor(Context context) {
 		super(context);
+		mHandler = new Handler();
 	}
 
 
 	public Rotor(Context context, AttributeSet attrs) {
 		super(context, attrs);
 
-		LoadApplications(true);
-		LoadFavorites(context);
 
 		mContext = context;
+		mHandler = new Handler();
 
 		// register our interest in hearing about changes to our surface
 		SurfaceHolder holder = getHolder();
@@ -278,8 +287,14 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 
 	}
 
+	@Override
+	protected void onAttachedToWindow() {
+		super.onAttachedToWindow();
+		loadFavorites(mContext);
+		loadApplications(true);
+	}
 
-	private void LoadFavorites(Context context) {
+	private void loadFavorites(Context context) {
 
 		if(mFavorites==null){
 			mFavorites = new ArrayList<ApplicationInfo>(4);
@@ -329,6 +344,7 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 			thread.start();
 			// <-- added fix
 		}else {
+			Log.e("PUPPA", "***************************************START");
 			thread.start();
 		}
 	}
@@ -372,33 +388,44 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 
 			downtime=event.getDownTime();
 
+			//
+			//			double a = angleFromPoint(prevX,prevY,mCanvasWidth,mCanvasHeight);
+			//			double b = angleFromPoint(touchDownX,touchDownY,mCanvasWidth,mCanvasHeight);
+			//
+			//
+			//
+			//			double lambda2 = a-b;
+			//
+			//			if((lambda2<0 && lambda > 0 )||(lambda2>0 && lambda < 0 )){
+			//				//				vibrator.vibrate(202);
+			//				inversion=true;
+			//			}else{
+			//				inversion=false;
+			//			}
+			//
+			//
+			//
+			//			if(lambda2!=0){
+			//				lambda = lambda2;
+			//				refresh=true;
+			//
+			//				rotation += lambda2;
+			//
+			//				if((rotation % 1)==0 && inversion==false){
+			//					vibrator.vibrate(2);
+			//				}
+			//			}
 
-			double a = angleFromPoint(prevX,prevY,mCanvasWidth,mCanvasHeight);
-			double b = angleFromPoint(touchDownX,touchDownY,mCanvasWidth,mCanvasHeight);
-
-
-
-			double lambda2 = a-b;
-
-			if((lambda2<0 && lambda > 0 )||(lambda2>0 && lambda < 0 )){
-				//				vibrator.vibrate(202);
-				inversion=true;
-			}else{
-				inversion=false;
-			}
-
-
-
-			if(lambda2!=0){
-				lambda = lambda2;
-				refresh=true;
-
-				rotation += lambda2;
-
-				if((rotation % 1)==0 && inversion==false){
-					vibrator.vibrate(2);
+			int b = (int) angleFromPoint(touchDownX,touchDownY,mCanvasWidth,mCanvasHeight);
+			synchronized (mApplications) {
+				int oldSelected = mSelectedApp;
+				mSelectedApp = Math.abs(b)%mApplications.size();
+				if (mOnItemSelectedListener!=null && oldSelected!=mSelectedApp) {
+					mOnItemSelectedListener.onItemSelected(this, mApplications, 
+							mApplications.get(mSelectedApp), mSelectedApp);
 				}
 			}
+
 			prevX=touchDownX;
 			prevY=touchDownY;
 			thread.onTouch();
@@ -413,40 +440,79 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 		return  (int) Math.toDegrees(r);
 	}
 
+	public void onApplicationsLoadingFinished(boolean changed) {
+		int oldSelected=mSelectedApp;
+		if (mApplications.isEmpty()) {
+			mSelectedApp=-1;
+		} else if (changed) {
+			mSelectedApp=0;
+		}
+		if (oldSelected!=mSelectedApp && mOnItemSelectedListener!=null) {
+			mOnItemSelectedListener.onItemSelected(this, mApplications, 
+					mApplications.get(mSelectedApp), mSelectedApp);
+		}
+		this.invalidate();
+	}
 
-	private  void LoadApplications(boolean isLaunching) {
+	private void loadApplications(boolean isLaunching) {
+		if (mApplicationLoaderThread==null) {
+			mApplicationLoaderThread = new Thread("ApplicationLoader") {
+				public void run() {
+					PackageManager manager = getContext().getPackageManager();
 
-		PackageManager manager = getContext().getPackageManager();
+					Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
+					mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
 
-		Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
-		mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+					final List<ResolveInfo> apps = manager.queryIntentActivities(mainIntent, 0);
+					Collections.sort(apps, new ResolveInfo.DisplayNameComparator(manager));
+					ArrayList<ApplicationInfo> appInfos=null;
+					if (apps != null) {
+						final int count = apps.size();
 
-		final List<ResolveInfo> apps = manager.queryIntentActivities(mainIntent, 0);
-		Collections.sort(apps, new ResolveInfo.DisplayNameComparator(manager));
-
-		if (apps != null) {
-			final int count = apps.size();
-
-			if (mApplications == null) {
-				mApplications = new ArrayList<ApplicationInfo>(count);
-			}
-			mApplications.clear();
-
-			for (int i = 0; i < count; i++) {
-				ApplicationInfo application = new ApplicationInfo();
-				ResolveInfo info = apps.get(i);
-				application.title = info.loadLabel(manager);
-				application.pakage = info.activityInfo.applicationInfo.packageName;
-				application.setActivity(new ComponentName(
-						info.activityInfo.applicationInfo.packageName,
-						info.activityInfo.name),
-						Intent.FLAG_ACTIVITY_NEW_TASK
-						| Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-				application.icon = info.activityInfo.loadIcon(manager);
-
-				mApplications.add(application);
-			}
+						appInfos = new ArrayList<ApplicationInfo>(count);
+						for (int i = 0; i < count; i++) {
+							ApplicationInfo application = new ApplicationInfo();
+							ResolveInfo info = apps.get(i);
+							application.title = info.loadLabel(manager);
+							application.pakage = info.activityInfo.applicationInfo.packageName;
+							application.setActivity(new ComponentName(
+									info.activityInfo.applicationInfo.packageName,
+									info.activityInfo.name),
+									Intent.FLAG_ACTIVITY_NEW_TASK
+									| Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+							application.icon = info.activityInfo.loadIcon(manager);
+							appInfos.add(application);
+						}
+					}
+					synchronized (mApplications) {
+						final boolean changed = appInfos==null||
+								mApplications.size()!=appInfos.size();
+						mApplications.clear();
+						if (appInfos!=null) {
+							for (ApplicationInfo info : appInfos) {
+								mApplications.add(info);
+							}
+						}
+						mHandler.post(new Runnable() {
+							@Override
+							public void run() {
+								onApplicationsLoadingFinished(changed);
+							}
+						});
+						mApplicationLoaderThread=null;
+					}
+				}
+			};
+			mApplicationLoaderThread.start();
 		}
 	}
 
+	public synchronized void setOnItemSelectedListener(OnItemSelectedListener listener) {
+		this.mOnItemSelectedListener=listener;
+	}
+
+	public static interface OnItemSelectedListener {
+		public void onItemSelected(Rotor rotor, List<ApplicationInfo> appList, 
+				ApplicationInfo appInfo, int index);
+	}
 }
