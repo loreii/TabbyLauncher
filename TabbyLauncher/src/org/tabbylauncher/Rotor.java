@@ -54,6 +54,10 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 		private int mCircleBlue=0;
 		private int mCircleGreen=255;
 		private int mBitmapSize;
+		private Paint mDebugLinePaint;
+
+		//enable debug info
+		private boolean debug=true;
 
 		public AnimationThread(SurfaceHolder surfaceHolder, Context context,
 				Handler handler) {
@@ -165,6 +169,9 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 				canvas.drawCircle(touchDownX, touchDownY, 20, mLinePaint);
 			}
 
+			if(debug)
+				debugGrid(canvas);
+
 			mLinePaint.setARGB(255, mCircleRed, mCircleGreen, mCircleBlue);
 			mLinePaint.setStyle(Style.STROKE);
 			mLinePaint.setStrokeWidth(mCircleWidth);
@@ -172,6 +179,10 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 			mLinePaint.setStyle(Style.FILL);
 
 			mLinePaint.setARGB(255, 255, 255, 255);
+			if(debug){
+				canvas.drawText("lambda=",mCenterX, mCenterY+10, mLinePaint);
+//				canvas.drawText(applicationList.get(Math.abs(b)%applicationList.size()),mCenterX, mCenterY, mLinePaint);
+			}
 
 			synchronized (mApplications) {
 				if (mSelectedApp>=0) {
@@ -194,11 +205,50 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 			canvas.restore();
 		}
 
+		private void debugGrid(Canvas canvas) {
+			
+			if(canvas==null)
+				return;
+	
+			// Initialize paints for finger hit
+			mDebugLinePaint = new Paint();
+			mDebugLinePaint.setAntiAlias(true);
+			
+			mDebugLinePaint.setTextSize(15f);
+			
+			mDebugLinePaint.setARGB(255, 0, 255, 0);
+			canvas.drawText("##("+mSelectedApp+")",touchDownX, touchDownY, mDebugLinePaint);
+			mDebugLinePaint.setARGB(255, 255, 0, 0);
+			canvas.drawLine(touchDownX, touchDownY,mCanvasWidth/2, mCanvasHeight/2, mDebugLinePaint);
+			canvas.drawLine(touchDownX, touchDownY,touchDownX, mCanvasHeight/2, mDebugLinePaint);
+			canvas.drawLine(touchDownX, mCanvasHeight/2,mCanvasWidth/2, mCanvasHeight/2, mDebugLinePaint);
+			
+			
+			for(int i = 0;i<mCanvasHeight;i+=50){
+				canvas.drawText("-> " + i, 0, i,  mDebugLinePaint);
+				canvas.drawLine(0, i, mCanvasWidth, i, mDebugLinePaint);
+			}
+			
+			for(int i = 0;i<mCanvasWidth;i+=50){
+				canvas.drawText("-> " + i,i, 20,  mDebugLinePaint);
+				canvas.drawLine(i, 0, i, mCanvasHeight, mDebugLinePaint);
+			}
+
+		}
+
+
+
+		private void runApplication() {
+
+
+		}
+
+
+
 		/**
 		 * Update physics animation
 		 * */
 		private void updatePhysics() {
-			// TODO Auto-generated method stub
 
 		}
 
@@ -452,7 +502,9 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 				int b = (int) angleFromPoint(touchDownX,touchDownY,mCanvasWidth,mCanvasHeight);
 				synchronized (mApplications) {
 					int oldSelected = mSelectedApp;
-					mSelectedApp = mApplications.size()>0?Math.abs(b)%mApplications.size():-1;
+					float appAngle = 360.0f/mApplications.size();
+					int c = (int) Math.min((int)b/appAngle,mApplications.size());
+					mSelectedApp = c;
 					if (mOnItemSelectedListener!=null && oldSelected!=mSelectedApp) {
 						mOnItemSelectedListener.onItemSelected(this, mApplications, 
 								mApplications.get(mSelectedApp), mSelectedApp);
@@ -469,7 +521,8 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 
 	private static double angleFromPoint(int x, int y, int width, int height) {
 		double r = Math.atan2(x - (width >>1 ), (height >> 1) - y);
-		return  (int) Math.toDegrees(r);
+		int d = (int) Math.toDegrees(r);
+		return d<0?360+d:d;  
 	}
 
 	public void onApplicationsLoadingFinished(boolean changed) {
