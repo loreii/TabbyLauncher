@@ -26,18 +26,6 @@
         android:layout_weight="1"
         android:gravity="center"/>
 
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:orientation="horizontal"
-        android:gravity="center" >
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/ic_menu_home" />
-    </LinearLayout>
     <!-- don't used in this moment -->
     <!-- <org.tabbylauncher.component.HorizontalPager -->
     <!-- android:id="@+id/horizontal_pager" -->

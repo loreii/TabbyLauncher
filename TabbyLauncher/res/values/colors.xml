@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<color
+		name="Now_0">#FFFFFF</color>
+	<color
+		name="Now_6">#000000</color>
+
+	<color
+		name="Now_6_5">#F2F2F2</color>
+	<color
+		name="Now_6_10">#ECECEA</color>
+	<color
+		name="Now_6_20">#D1D1D1</color>
+	<color
+		name="Now_6_30">#B3B3B3</color>
+	<color
+		name="Now_6_40">#999999</color>
+	<color
+		name="Now_6_50">#808080</color>
+	<color
+		name="Now_6_60">#666666</color>
+	<color
+		name="Now_6_75">#3F3F3F</color>
+	<color
+		name="Now_6_80">#333333</color>
+	<color
+		name="Now_6_97">#080808</color>
+	<color
+		name="Now_0_40o">#66FFFFFF</color>
+	<color
+		name="Now_0_70o">#B2FFFFFF</color>
+	<color
+		name="Now_6_20o">#33000000</color>
+	<color
+		name="Now_6_40o">#66000000</color>
+	<color
+		name="Now_6_60o">#99000000</color>
+	<color
+		name="Now_6_80o">#CC000000</color>
+
+	<color
+		name="Warm_Grey_03">#88817B</color>
+	<color
+		name="Grass_Green_02">#6CB130</color>
+	<color
+		name="Grass_Green_03">#39741C</color>
+	<color
+		name="Red_03">#910F10</color>
+
+	<!-- Title bar and filters -->
+	<color
+		name="title_bar_color">@color/Now_6_60o</color>
+
+	<color
+		name="background_start">@color/Now_6_30</color>
+	<color
+		name="background_center">@color/Now_6_20</color>
+	<color
+		name="background_end">@color/Now_0</color>
+
+</resources>
