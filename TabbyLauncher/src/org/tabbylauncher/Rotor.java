@@ -306,7 +306,7 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 	private int mCenterY;
 	private OnItemSelectedListener mOnItemSelectedListener;
 	private OnRotorClickListener mOnRotorClickListener;
-
+	protected boolean applicationReady;
 	/*
 	 * View Handler 
 	 */
@@ -449,7 +449,7 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 				int y=lastDownY-mCenterY;
 				int rdc=x*x+y*y;
 				if (inInnerCircle && (rdc<rq)) {
-					if (mOnRotorClickListener!=null) {
+					if (mOnRotorClickListener!=null && applicationReady) {
 						mOnRotorClickListener.onItemClick(this, mApplications, 
 								getSelectedAppInfo(), mSelectedApp);
 					}
@@ -542,6 +542,8 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 	private void loadApplications(boolean isLaunching) {
 		if (mApplicationLoaderThread==null) {
 			mApplicationLoaderThread = new Thread("ApplicationLoader") {
+				
+
 				public void run() {
 					PackageManager manager = getContext().getPackageManager();
 
@@ -585,6 +587,7 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 							}
 						});
 						mApplicationLoaderThread=null;
+						applicationReady=true;
 					}
 				}
 			};
