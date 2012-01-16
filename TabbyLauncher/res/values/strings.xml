@@ -2,5 +2,10 @@
 <resources>
 
     <string name="app_name">Tabby Launcher</string>
-
+	
+	<!-- Home Menus -->
+    <string name="menu_wallpaper">Wallpaper</string>
+    <string name="menu_tag">Tag</string>
+    <string name="menu_settings">Settings</string>
+    
 </resources>
