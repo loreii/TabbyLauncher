@@ -2,8 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
-    android:background="@drawable/tabby_kruger">
+    android:background="@drawable/tabby_kruger"
+    android:orientation="vertical" >
 
     <TextView
         android:id="@+id/application_name_text_view"
@@ -11,21 +11,28 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:gravity="center"
+        android:text="Loading..."
         android:textColor="#DDDDCC"
         android:textSize="24dp"
-        android:textStyle="bold"
-        android:text="Loading..."/>
+        android:textStyle="bold" />
 
     <org.tabbylauncher.Rotor
         android:id="@+id/rotor"
         android:layout_width="320dp"
-        android:layout_height="320dp"/>
+        android:layout_height="320dp" />
 
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:gravity="center"/>
+        android:gravity="center" />
+
+    <org.tabbylauncher.component.StackLayoutBar
+        android:id="@+id/stacklayoutbar"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+                android:layout_weight="1"
+        android:orientation="horizontal" />
 
     <!-- don't used in this moment -->
     <!-- <org.tabbylauncher.component.HorizontalPager -->
