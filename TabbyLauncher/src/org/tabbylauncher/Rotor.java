@@ -6,6 +6,8 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.tabbylauncher.component.SpinnerArc;
+
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -181,11 +183,11 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 			mLinePaint.setStrokeCap(Paint.Cap.BUTT);
 
 			RectF oval = new RectF(mCenterX-mCircleRadius,mCenterY- mCircleRadius, mCenterX+mCircleRadius, mCenterY+mCircleRadius);
-			
-			int i=40;
+
+			int strokeWidth=40;
 			for(Sector sector : round){ 															//render the inner sectors
 				mLinePaint.setColor(sector.color);
-				mLinePaint.setStrokeWidth(i);i+=5;
+				mLinePaint.setStrokeWidth(strokeWidth);strokeWidth+=5;
 				canvas.drawArc(oval, sector.start, sector.getDegres() , false, mLinePaint);
 			}
 
@@ -213,19 +215,19 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 
 					canvas.drawBitmap(scaledBMP,(mCanvasWidth/2)-bitmapWidth, (mCanvasHeight/2)-bitmapHeight, null);
 				}else{
-					//loading applications draw spinner
-					//TODO
-					//					Resources res = mContext.getResources();
-					//				    Drawable myImage = res.getDrawable(android.R.drawable.spinner_background);
-					//				    Bitmap bitmap = ((BitmapDrawable)myImage).getBitmap();
-					//				    int bitmapWidth  = (bitmap.getWidth()>>1);
-					//					int bitmapHeight = (bitmap.getHeight()>>1);
-					//				    canvas.drawBitmap(bitmap, (mCanvasWidth/2)-bitmapWidth, (mCanvasHeight/2)-bitmapHeight, null);
+
+					if(spinnerArc!=null)
+						spinnerArc.draw(canvas);
+
 				}
 			}
 
 			canvas.restore();
 		}
+
+
+		private SpinnerArc spinnerArc ; 
+
 
 
 
@@ -276,12 +278,14 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 				mCanvasWidth = width;
 				mCanvasHeight = height;
 				mCenterX=width>>1;
-			mCenterY=height>>1;
-			mCircleExtRadius = Math.min(width, height)/2.0f;
-			mCircleWidth = (int)mCircleExtRadius/3;
-			mCircleRadius = mCircleExtRadius-(mCircleWidth>>1);
-			mCircleIntRadius = mCircleExtRadius-mCircleWidth;
-			mBitmapSize=((int)mCircleExtRadius)>>1;
+				mCenterY=height>>1;
+				mCircleExtRadius = Math.min(width, height)/2.0f;
+				mCircleWidth = (int)mCircleExtRadius/3;
+				mCircleRadius = mCircleExtRadius-(mCircleWidth>>1);
+				mCircleIntRadius = mCircleExtRadius-mCircleWidth;
+				mBitmapSize=((int)mCircleExtRadius)>>1;
+	
+				spinnerArc = new SpinnerArc(mCenterX,mCenterY,100);
 			}
 
 		}
@@ -315,8 +319,8 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 	private boolean refresh;
 	private Thread mApplicationLoaderThread=null;
 	public  static ArrayList<ApplicationInfo> mApplications = new ArrayList<ApplicationInfo>();
-	
-	
+
+
 	private int mSelectedApp=-1;
 	private ArrayList<ApplicationInfo> mFavorites;
 	private int mCanvasWidth;
@@ -335,7 +339,7 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 		round.add(new Sector(Color.GREEN,16,32));
 		round.add(new Sector(Color.GRAY,32,36));
 		round.add(new Sector(Color.YELLOW,36,360));
-		
+
 	}
 
 	/*
@@ -628,7 +632,7 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 
 
 	public void updateSectors(){
-		
+
 		ArrayList<ApplicationInfo> tmp = new ArrayList<ApplicationInfo>();
 		//remove all unset colors
 		for (ApplicationInfo i : mApplications){
@@ -643,24 +647,24 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 			}
 		};
 		Collections.sort(tmp, comparator);
-		
+
 		round.clear();
-		
+
 		int appAngle = 360 / mApplications.size();
-		
-	
+
+
 		Sector s = new Sector(tmp.remove(0).color, 0, appAngle);
 		for(ApplicationInfo i:tmp){
 			if(!i.color.equals(s.color)){
 				round.add(s);
-				
+
 				s= new Sector(i.color, s.end, s.end);
-				
+
 			}
 			s.end+=appAngle;
-			
+
 		}
-		
+
 	}
 
 
@@ -678,7 +682,7 @@ class Sector{
 		this.color = color;
 		this.start=start;
 		this.end=end;
-		
+
 	}
 
 	public int getDegres() {
