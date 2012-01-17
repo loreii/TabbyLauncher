@@ -80,8 +80,6 @@ public class TagListActivity extends ListActivity  implements OnItemClickListene
 				holder.icon 	   = (ImageView) convertView.findViewById(R.id.tag_item_image);
 				holder.color 	   = (Button)    convertView.findViewById(R.id.tag_item_color);
 
-			
-
 				convertView.setTag(holder);
 			} else {
 				// Get the ViewHolder back to get fast access to the TextView
@@ -103,7 +101,7 @@ public class TagListActivity extends ListActivity  implements OnItemClickListene
 				public void onClick(View v) {
 					node.color=ColorUtils.getNextColor(node.color);
 					holder.color.setBackgroundColor(node.color);
-					
+					mUri = getContentResolver().insert(intent.getData(), null);
 				}
 			});
 
@@ -128,6 +126,7 @@ public class TagListActivity extends ListActivity  implements OnItemClickListene
 
 		ListView shot = getListView();
 		shot.setOnItemClickListener(this);
+
 
 
 		//		Bundle bundle = getIntent().getExtras();

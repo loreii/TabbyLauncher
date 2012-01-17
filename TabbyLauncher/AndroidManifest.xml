@@ -20,6 +20,11 @@
         android:label="@string/app_name"
         android:persistent="true"
         android:theme="@style/TabbyLauncher" >
+        
+         <provider android:name=".db.TabbyProvider"
+            android:authorities="org.tabbylauncher.Tabby"/>
+        
+        
         <activity
             android:label="@string/app_name"
             android:name=".Home" android:screenOrientation="portrait">

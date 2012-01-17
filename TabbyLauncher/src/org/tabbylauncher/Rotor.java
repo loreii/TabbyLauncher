@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.tabbylauncher.component.SpinnerArc;
+import org.tabbylauncher.db.TabbyProvider;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -136,6 +137,7 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 
 		private void onResume() {
 			mRun=true;
+			
 		}
 
 		private void angleIcon(Canvas canvas) {
@@ -382,11 +384,15 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 		thread.onResume();
 	}
 
+	TabbyProvider db = new TabbyProvider();
+	
 	@Override
 	protected void onAttachedToWindow() {
 		super.onAttachedToWindow();
 		loadFavorites(mContext);
 		loadApplications(true);
+		
+		
 	}
 
 	private void loadFavorites(Context context) {
