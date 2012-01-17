@@ -24,7 +24,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Vibrator;
-import android.provider.ContactsContract;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -194,11 +193,14 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 					RectF viewRect = new RectF(0, 0, mBitmapSize, mBitmapSize);
 					mtx.setRectToRect(drawableRect, viewRect, Matrix.ScaleToFit.CENTER);
 
-					Bitmap scaledBMP = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), mtx, true);
+					Bitmap scaledBMP = Bitmap.createBitmap(bitmap, 0, 0, 
+							bitmap.getWidth(), bitmap.getHeight(), mtx, true);
 					int bitmapWidth  = (scaledBMP.getWidth()>>1);
 					int bitmapHeight = (scaledBMP.getHeight()>>1);
 
 					canvas.drawBitmap(scaledBMP,(mCanvasWidth/2)-bitmapWidth, (mCanvasHeight/2)-bitmapHeight, null);
+					scaledBMP.recycle();
+					scaledBMP=null;
 				}
 			}
 
