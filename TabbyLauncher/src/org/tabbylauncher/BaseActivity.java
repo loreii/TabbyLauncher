@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 
 /**
@@ -21,16 +22,17 @@ import android.support.v4.app.FragmentActivity;
 public class BaseActivity extends FragmentActivity {
 	protected ArrayList<ApplicationInfo> mApplications = new ArrayList<ApplicationInfo>();
 	protected Thread mApplicationLoaderThread=null;
+	private Handler mHandler;
+
 
 	@Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
-		loadApplications(true);
-
+		mHandler = new Handler();
 	}
 	
 	
-	private void loadApplications(boolean isLaunching) {
+	protected void loadApplications(boolean isLaunching, final Rotor mRotor) {
 		if (mApplicationLoaderThread==null) {
 			mApplicationLoaderThread = new Thread("ApplicationLoader") {
 				public void run() {
@@ -69,12 +71,12 @@ public class BaseActivity extends FragmentActivity {
 								mApplications.add(info);
 							}
 						}
-//						mHandler.post(new Runnable() {
-//							@Override
-//							public void run() {
-//								onApplicationsLoadingFinished(changed);
-//							}
-//						});
+						mHandler.post(new Runnable() {
+							@Override
+							public void run() {
+								mRotor.onApplicationsLoadingFinished(changed);
+							}
+						});
 						mApplicationLoaderThread=null;
 					}
 				}

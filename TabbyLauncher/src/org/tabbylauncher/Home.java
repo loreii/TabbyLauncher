@@ -40,9 +40,13 @@ public class Home extends BaseActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
 		setContentView(R.layout.home);
 		mApplicationNameTextView = (TextView) findViewById(R.id.application_name_text_view);
 		mRotor = (Rotor) findViewById(R.id.rotor);
+
+		loadApplications(true, mRotor);
+		
 		mRotor.setArrayElement(mApplicationLoaderThread, mApplications);
 		mRotor.setOnItemSelectedListener(new Rotor.OnItemSelectedListener() {
 			@Override
