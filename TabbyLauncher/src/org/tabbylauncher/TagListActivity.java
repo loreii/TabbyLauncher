@@ -101,7 +101,7 @@ public class TagListActivity extends ListActivity  implements OnItemClickListene
 				public void onClick(View v) {
 					node.color=ColorUtils.getNextColor(node.color);
 					holder.color.setBackgroundColor(node.color);
-					mUri = getContentResolver().insert(intent.getData(), null);
+					//mUri = getContentResolver().insert(intent.getData(), null); help me there!!
 				}
 			});
 
