@@ -106,7 +106,8 @@ public class TagListActivity extends ListActivity  implements OnItemClickListene
 				public void onClick(View v) {
 					node.color=ColorUtils.getNextColor(node.color);
 					holder.color.setBackgroundColor(node.color);
-					//mUri = getContentResolver().insert(intent.getData(), null); help me there!!
+					//TODO add entry in favorites...
+					
 				}
 			});
 
@@ -122,6 +123,16 @@ public class TagListActivity extends ListActivity  implements OnItemClickListene
 		}
 	}
 
+	
+	void addFavorites(String pkg, String tag, int color){
+		ContentResolver r = getContentResolver();
+		ContentValues values=new ContentValues();
+		values.put(Tabby.Applications.COLOR,   color);
+		values.put(Tabby.Applications.TAG,     tag);
+		values.put(Tabby.Applications.PACKAGE, pkg);
+		Uri url = Uri.parse("content://"+Tabby.AUTHORITY+"/favorites");
+		r.insert(url, values);
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -131,15 +142,6 @@ public class TagListActivity extends ListActivity  implements OnItemClickListene
 
 		ListView shot = getListView();
 		shot.setOnItemClickListener(this);
-
-		ContentResolver r = getContentResolver();
-		ContentValues values=new ContentValues();
-		values.put(Tabby.Applications.COLOR,   Color.BLUE);
-		values.put(Tabby.Applications.TAG,     "example");
-		values.put(Tabby.Applications.PACKAGE, "example");
-		Uri url = Uri.parse("content://"+Tabby.AUTHORITY+"/favorites");
-		r.insert(url, values);
-
 
 		//Bundle bundle = getIntent().getExtras();
 		//		
