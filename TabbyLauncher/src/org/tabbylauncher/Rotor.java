@@ -98,7 +98,7 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 						synchronized (mSurfaceHolder) {
 							updatePhysics();
 							doDraw(c);
-//							angleIcon(c);
+							//							angleIcon(c);
 						}
 					} else {
 						mRun=false;
@@ -133,23 +133,23 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 			mRun=true;
 		}
 
-//		private void angleIcon(Canvas canvas) {
-//			ApplicationInfo applicationInfo = mFavorites.get(0);
-//			Bitmap bitmap = ((BitmapDrawable)applicationInfo.icon).getBitmap();
-//			canvas.drawBitmap(bitmap, 10, 10, null);
-//
-//			applicationInfo = mFavorites.get(1);
-//			bitmap = ((BitmapDrawable)applicationInfo.icon).getBitmap();
-//			canvas.drawBitmap(bitmap, mCanvasWidth-bitmap.getWidth(), 10, null);
-//
-//			applicationInfo = mFavorites.get(2);
-//			bitmap = ((BitmapDrawable)applicationInfo.icon).getBitmap();
-//			canvas.drawBitmap(bitmap, 10, mCanvasHeight-bitmap.getHeight(), null);
-//
-//			applicationInfo = mFavorites.get(3);
-//			bitmap = ((BitmapDrawable)applicationInfo.icon).getBitmap();
-//			canvas.drawBitmap(bitmap, mCanvasWidth-bitmap.getWidth(), mCanvasHeight-bitmap.getHeight(), null);
-//		}
+		//		private void angleIcon(Canvas canvas) {
+		//			ApplicationInfo applicationInfo = mFavorites.get(0);
+		//			Bitmap bitmap = ((BitmapDrawable)applicationInfo.icon).getBitmap();
+		//			canvas.drawBitmap(bitmap, 10, 10, null);
+		//
+		//			applicationInfo = mFavorites.get(1);
+		//			bitmap = ((BitmapDrawable)applicationInfo.icon).getBitmap();
+		//			canvas.drawBitmap(bitmap, mCanvasWidth-bitmap.getWidth(), 10, null);
+		//
+		//			applicationInfo = mFavorites.get(2);
+		//			bitmap = ((BitmapDrawable)applicationInfo.icon).getBitmap();
+		//			canvas.drawBitmap(bitmap, 10, mCanvasHeight-bitmap.getHeight(), null);
+		//
+		//			applicationInfo = mFavorites.get(3);
+		//			bitmap = ((BitmapDrawable)applicationInfo.icon).getBitmap();
+		//			canvas.drawBitmap(bitmap, mCanvasWidth-bitmap.getWidth(), mCanvasHeight-bitmap.getHeight(), null);
+		//		}
 
 		/**
 		 * Make the drawing
@@ -181,7 +181,7 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 			mLinePaint.setARGB(255, 255, 255, 255);
 			if(debug){
 				canvas.drawText("lambda=",mCenterX, mCenterY+10, mLinePaint);
-//				canvas.drawText(applicationList.get(Math.abs(b)%applicationList.size()),mCenterX, mCenterY, mLinePaint);
+				//				canvas.drawText(applicationList.get(Math.abs(b)%applicationList.size()),mCenterX, mCenterY, mLinePaint);
 			}
 
 			synchronized (mApplications) {
@@ -206,29 +206,29 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 		}
 
 		private void debugGrid(Canvas canvas) {
-			
+
 			if(canvas==null)
 				return;
-	
+
 			// Initialize paints for finger hit
 			mDebugLinePaint = new Paint();
 			mDebugLinePaint.setAntiAlias(true);
-			
+
 			mDebugLinePaint.setTextSize(15f);
-			
+
 			mDebugLinePaint.setARGB(255, 0, 255, 0);
 			canvas.drawText("##("+mSelectedApp+")",touchDownX, touchDownY, mDebugLinePaint);
 			mDebugLinePaint.setARGB(255, 255, 0, 0);
 			canvas.drawLine(touchDownX, touchDownY,mCanvasWidth/2, mCanvasHeight/2, mDebugLinePaint);
 			canvas.drawLine(touchDownX, touchDownY,touchDownX, mCanvasHeight/2, mDebugLinePaint);
 			canvas.drawLine(touchDownX, mCanvasHeight/2,mCanvasWidth/2, mCanvasHeight/2, mDebugLinePaint);
-			
-			
+
+
 			for(int i = 0;i<mCanvasHeight;i+=50){
 				canvas.drawText("-> " + i, 0, i,  mDebugLinePaint);
 				canvas.drawLine(0, i, mCanvasWidth, i, mDebugLinePaint);
 			}
-			
+
 			for(int i = 0;i<mCanvasWidth;i+=50){
 				canvas.drawText("-> " + i,i, 20,  mDebugLinePaint);
 				canvas.drawLine(i, 0, i, mCanvasHeight, mDebugLinePaint);
@@ -259,12 +259,12 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 				mCanvasWidth = width;
 				mCanvasHeight = height;
 				mCenterX=width>>1;
-				mCenterY=height>>1;
-				mCircleExtRadius = Math.min(width, height)/2.0f;
-				mCircleWidth = (int)mCircleExtRadius/3;
-				mCircleRadius = mCircleExtRadius-(mCircleWidth>>1);
-				mCircleIntRadius = mCircleExtRadius-mCircleWidth;
-				mBitmapSize=((int)mCircleExtRadius)>>1;
+			mCenterY=height>>1;
+			mCircleExtRadius = Math.min(width, height)/2.0f;
+			mCircleWidth = (int)mCircleExtRadius/3;
+			mCircleRadius = mCircleExtRadius-(mCircleWidth>>1);
+			mCircleIntRadius = mCircleExtRadius-mCircleWidth;
+			mBitmapSize=((int)mCircleExtRadius)>>1;
 			}
 
 		}
@@ -297,7 +297,7 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 	private double rotation;
 	private boolean refresh;
 	private Thread mApplicationLoaderThread=null;
-	private ArrayList<ApplicationInfo> mApplications = new ArrayList<ApplicationInfo>();
+	private ArrayList<ApplicationInfo> mApplications = null;
 	private int mSelectedApp=-1;
 	private int mCanvasWidth;
 	private int mCanvasHeight;
@@ -349,35 +349,35 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 	@Override
 	protected void onAttachedToWindow() {
 		super.onAttachedToWindow();
-//		loadFavorites(mContext);
-		loadApplications(true);
+		//		loadFavorites(mContext);
+//		loadApplications(true);
 	}
 
-//	private void loadFavorites(Context context) {
-//
-//		if(mFavorites==null){
-//			mFavorites = new ArrayList<ApplicationInfo>(4);
-//		}
-//		mFavorites.clear();
-//		ApplicationInfo applicationInfo = new ApplicationInfo();
-//		applicationInfo.icon = context.getResources().getDrawable(android.R.drawable.ic_menu_call);
-//		applicationInfo.title = "Phone";
-//		applicationInfo.intent = new Intent(Intent.ACTION_DIAL);
-//		mFavorites.add(applicationInfo);
-//		applicationInfo = new ApplicationInfo();
-//		applicationInfo.icon = context.getResources().getDrawable(android.R.drawable.ic_menu_send);
-//		applicationInfo.title = "Message";
-//		applicationInfo.intent = new Intent(Intent.ACTION_VIEW, ContactsContract.Contacts.CONTENT_URI);
-//		mFavorites.add(applicationInfo);
-//		applicationInfo = new ApplicationInfo();
-//		applicationInfo.icon = context.getResources().getDrawable(android.R.drawable.ic_menu_my_calendar);
-//		applicationInfo.title = "Calendar";
-//		mFavorites.add(applicationInfo);
-//		applicationInfo = new ApplicationInfo();
-//		applicationInfo.icon = context.getResources().getDrawable(android.R.drawable.ic_menu_agenda);
-//		applicationInfo.title = "Agenda";
-//		mFavorites.add(applicationInfo);
-//	}
+	//	private void loadFavorites(Context context) {
+	//
+	//		if(mFavorites==null){
+	//			mFavorites = new ArrayList<ApplicationInfo>(4);
+	//		}
+	//		mFavorites.clear();
+	//		ApplicationInfo applicationInfo = new ApplicationInfo();
+	//		applicationInfo.icon = context.getResources().getDrawable(android.R.drawable.ic_menu_call);
+	//		applicationInfo.title = "Phone";
+	//		applicationInfo.intent = new Intent(Intent.ACTION_DIAL);
+	//		mFavorites.add(applicationInfo);
+	//		applicationInfo = new ApplicationInfo();
+	//		applicationInfo.icon = context.getResources().getDrawable(android.R.drawable.ic_menu_send);
+	//		applicationInfo.title = "Message";
+	//		applicationInfo.intent = new Intent(Intent.ACTION_VIEW, ContactsContract.Contacts.CONTENT_URI);
+	//		mFavorites.add(applicationInfo);
+	//		applicationInfo = new ApplicationInfo();
+	//		applicationInfo.icon = context.getResources().getDrawable(android.R.drawable.ic_menu_my_calendar);
+	//		applicationInfo.title = "Calendar";
+	//		mFavorites.add(applicationInfo);
+	//		applicationInfo = new ApplicationInfo();
+	//		applicationInfo.icon = context.getResources().getDrawable(android.R.drawable.ic_menu_agenda);
+	//		applicationInfo.title = "Agenda";
+	//		mFavorites.add(applicationInfo);
+	//	}
 
 
 	@Override
@@ -453,11 +453,11 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 								getSelectedAppInfo(), mSelectedApp);
 					}
 				}
-//				else
-//					if (outOfCircle) {
-//					int idx = x<0?(y<0?0:3):(y<0?1:2);
-//					mOnRotorClickListener.onQuadrantListener(idx, mFavorites.get(idx).intent);
-//				}
+				//				else
+				//					if (outOfCircle) {
+				//					int idx = x<0?(y<0?0:3):(y<0?1:2);
+				//					mOnRotorClickListener.onQuadrantListener(idx, mFavorites.get(idx).intent);
+				//				}
 				i=1; 
 				break;
 			default:
@@ -540,58 +540,58 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 		this.invalidate();
 	}
 
-	private void loadApplications(boolean isLaunching) {
-		if (mApplicationLoaderThread==null) {
-			mApplicationLoaderThread = new Thread("ApplicationLoader") {
-				public void run() {
-					PackageManager manager = getContext().getPackageManager();
-
-					Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
-					mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-
-					final List<ResolveInfo> apps = manager.queryIntentActivities(mainIntent, 0);
-					Collections.sort(apps, new ResolveInfo.DisplayNameComparator(manager));
-					ArrayList<ApplicationInfo> appInfos=null;
-					if (apps != null) {
-						final int count = apps.size();
-
-						appInfos = new ArrayList<ApplicationInfo>(count);
-						for (int i = 0; i < count; i++) {
-							ApplicationInfo application = new ApplicationInfo();
-							ResolveInfo info = apps.get(i);
-							application.title = info.loadLabel(manager);
-							application.pakage = info.activityInfo.applicationInfo.packageName;
-							application.setActivity(new ComponentName(
-									info.activityInfo.applicationInfo.packageName,
-									info.activityInfo.name),
-									Intent.FLAG_ACTIVITY_NEW_TASK
-									| Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-							application.icon = info.activityInfo.loadIcon(manager);
-							appInfos.add(application);
-						}
-					}
-					synchronized (mApplications) {
-						final boolean changed = appInfos==null||
-								mApplications.size()!=appInfos.size();
-						mApplications.clear();
-						if (appInfos!=null) {
-							for (ApplicationInfo info : appInfos) {
-								mApplications.add(info);
-							}
-						}
-						mHandler.post(new Runnable() {
-							@Override
-							public void run() {
-								onApplicationsLoadingFinished(changed);
-							}
-						});
-						mApplicationLoaderThread=null;
-					}
-				}
-			};
-			mApplicationLoaderThread.start();
-		}
-	}
+//	private void loadApplications(boolean isLaunching) {
+//		if (mApplicationLoaderThread==null) {
+//			mApplicationLoaderThread = new Thread("ApplicationLoader") {
+//				public void run() {
+//					PackageManager manager = getContext().getPackageManager();
+//
+//					Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
+//					mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+//
+//					final List<ResolveInfo> apps = manager.queryIntentActivities(mainIntent, 0);
+//					Collections.sort(apps, new ResolveInfo.DisplayNameComparator(manager));
+//					ArrayList<ApplicationInfo> appInfos=null;
+//					if (apps != null) {
+//						final int count = apps.size();
+//
+//						appInfos = new ArrayList<ApplicationInfo>(count);
+//						for (int i = 0; i < count; i++) {
+//							ApplicationInfo application = new ApplicationInfo();
+//							ResolveInfo info = apps.get(i);
+//							application.title = info.loadLabel(manager);
+//							application.pakage = info.activityInfo.applicationInfo.packageName;
+//							application.setActivity(new ComponentName(
+//									info.activityInfo.applicationInfo.packageName,
+//									info.activityInfo.name),
+//									Intent.FLAG_ACTIVITY_NEW_TASK
+//									| Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+//							application.icon = info.activityInfo.loadIcon(manager);
+//							appInfos.add(application);
+//						}
+//					}
+//					synchronized (mApplications) {
+//						final boolean changed = appInfos==null||
+//								mApplications.size()!=appInfos.size();
+//						mApplications.clear();
+//						if (appInfos!=null) {
+//							for (ApplicationInfo info : appInfos) {
+//								mApplications.add(info);
+//							}
+//						}
+//						mHandler.post(new Runnable() {
+//							@Override
+//							public void run() {
+//								onApplicationsLoadingFinished(changed);
+//							}
+//						});
+//						mApplicationLoaderThread=null;
+//					}
+//				}
+//			};
+//			mApplicationLoaderThread.start();
+//		}
+//	}
 
 	public ApplicationInfo getSelectedAppInfo() {
 		synchronized (mApplications) {
@@ -615,5 +615,11 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 		public void onItemClick(Rotor rotor, List<ApplicationInfo> appList, 
 				ApplicationInfo appInfo, int index);
 		public void onQuadrantListener(int idx, Intent intent);
+	}
+
+	public synchronized void setArrayElement(Thread applicationLoaderThread, 
+			ArrayList<ApplicationInfo> applications){
+		mApplicationLoaderThread=applicationLoaderThread;
+		mApplications=applications;
 	}
 }

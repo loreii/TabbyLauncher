@@ -21,38 +21,33 @@
         android:layout_width="320dp"
         android:layout_height="320dp" />
 
-    <TextView
+<!--     <TextView -->
+<!--         android:layout_width="fill_parent" -->
+<!--         android:layout_height="0dp" -->
+<!--         android:layout_weight="1" -->
+<!--         android:gravity="center" /> -->
+
+    <GridView
+        android:id="@+id/all_apps"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="center" />
+        android:layout_weight="3"
+        android:alwaysDrawnWithCache="true"
+        android:columnWidth="78dp"
+        android:drawSelectorOnTop="false"
+        android:background="@color/Now_0_40o"
+        android:numColumns="auto_fit"
+        android:persistentDrawingCache="animation|scrolling"
+        android:scrollbars="none"
+        android:stackFromBottom="true"
+        android:stretchMode="spacingWidth"
+        android:visibility="visible" />
 
     <org.tabbylauncher.component.StackLayoutBar
         android:id="@+id/stacklayoutbar"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-                android:layout_weight="1"
+        android:layout_weight="1"
         android:orientation="horizontal" />
-
-    <!-- don't used in this moment -->
-    <!-- <org.tabbylauncher.component.HorizontalPager -->
-    <!-- android:id="@+id/horizontal_pager" -->
-    <!-- android:layout_width="fill_parent" -->
-    <!-- android:layout_height="fill_parent" > -->
-
-
-    <!-- <fragment -->
-    <!-- android:id="@+id/app" -->
-    <!-- android:name="org.tabbylauncher.fragment.Applications" -->
-    <!-- android:layout_width="fill_parent" -->
-    <!-- android:layout_height="fill_parent" /> -->
-
-
-    <!-- <fragment -->
-    <!-- android:id="@+id/contact" -->
-    <!-- android:name="org.tabbylauncher.fragment.AllContacts" -->
-    <!-- android:layout_width="fill_parent" -->
-    <!-- android:layout_height="fill_parent" /> -->
-    <!-- </org.tabbylauncher.component.HorizontalPager> -->
 
 </LinearLayout>

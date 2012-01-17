@@ -3,8 +3,12 @@
  */
 package org.tabbylauncher.component;
 
+import java.util.List;
+
 import org.tabbylauncher.ApplicationInfo;
 import org.tabbylauncher.R;
+import org.tabbylauncher.Rotor;
+import org.tabbylauncher.Rotor.OnItemSelectedListener;
 
 import android.content.Context;
 import android.content.Intent;
@@ -25,7 +29,7 @@ import android.widget.TextView;
 public class StackLayoutBar extends LinearLayout implements OnClickListener{
 
 	LayoutInflater mInflater;
-
+	OnItemSelectedListener  mOnItemSelectedListener; 
 	/**
 	 * @param context
 	 */
@@ -45,20 +49,20 @@ public class StackLayoutBar extends LinearLayout implements OnClickListener{
 
 	private void initLayout(Context context) {
 		mInflater = LayoutInflater.from(getContext());
-		
-		
+
+
 		setApplicationsInfo(context.getResources().getDrawable(android.R.drawable.ic_menu_call), 
 				"Call",
 				new Intent(Intent.ACTION_DIAL));
-		
+
 		setApplicationsInfo(context.getResources().getDrawable(android.R.drawable.ic_menu_send), 
 				"Message",
 				new Intent(Intent.ACTION_VIEW, ContactsContract.Contacts.CONTENT_URI));
-		
+
 		setApplicationsInfo(context.getResources().getDrawable(android.R.drawable.ic_dialog_dialer), 
 				"All",
-				new Intent(Intent.ACTION_MAIN));
-		
+				null);
+
 		setApplicationsInfo(context.getResources().getDrawable(android.R.drawable.ic_menu_search), 
 				"Search",
 				new Intent(Intent.ACTION_SEARCH));
@@ -79,7 +83,7 @@ public class StackLayoutBar extends LinearLayout implements OnClickListener{
 		applicationInfo.intent = intent;
 		addIcon(applicationInfo);
 	}
-	
+
 	private void addIcon(ApplicationInfo applicationInfo) {
 		View view = mInflater.inflate(R.layout.all_applications_button, this, false);
 		ImageView imageview = (ImageView) view.findViewById(R.id.image);
@@ -93,9 +97,22 @@ public class StackLayoutBar extends LinearLayout implements OnClickListener{
 
 	@Override
 	public void onClick(View view) {
-		getContext().startActivity((Intent) view.getTag());
-		
-		
+		Object object = view.getTag();
+		if(object != null){
+			getContext().startActivity((Intent) object);
+		}else{
+			mOnItemSelectedListener.onItemSelected();
+		}
+
+
+	}
+	
+	public synchronized void setOnItemSelectedListener(OnItemSelectedListener listener) {
+		this.mOnItemSelectedListener=listener;
+	}
+
+	public static interface OnItemSelectedListener {
+		public void onItemSelected();
 	}
 
 
