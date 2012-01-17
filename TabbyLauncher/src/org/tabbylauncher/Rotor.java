@@ -36,6 +36,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 
 public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 	/*
@@ -637,8 +638,20 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 	}
 
 
+	@Override
+	protected void onVisibilityChanged(View changedView, int visibility) {
+		if(visibility==0){
+			//back on screen
+			updateSectors();
+		}
+		super.onVisibilityChanged(changedView, visibility);
+	}
+	
+	
 	public void updateSectors(){
-
+		if (mApplications.isEmpty())
+			return;
+		
 		ArrayList<ApplicationInfo> tmp = new ArrayList<ApplicationInfo>();
 		//remove all unset colors
 		for (ApplicationInfo i : mApplications){
