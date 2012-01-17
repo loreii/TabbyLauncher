@@ -2,10 +2,15 @@ package org.tabbylauncher;
 
 import java.util.ArrayList;
 
+import org.tabbylauncher.db.Tabby;
 import org.w3c.dom.Node;
 
 import android.app.ListActivity;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -127,16 +132,23 @@ public class TagListActivity extends ListActivity  implements OnItemClickListene
 		ListView shot = getListView();
 		shot.setOnItemClickListener(this);
 
+		ContentResolver r = getContentResolver();
+		ContentValues values=new ContentValues();
+		values.put(Tabby.Applications.COLOR,   Color.BLUE);
+		values.put(Tabby.Applications.TAG,     "example");
+		values.put(Tabby.Applications.PACKAGE, "example");
+		Uri url = Uri.parse("content://"+Tabby.AUTHORITY+"/favorites");
+		r.insert(url, values);
 
 
-		//		Bundle bundle = getIntent().getExtras();
+		//Bundle bundle = getIntent().getExtras();
 		//		
-		//		try{
-		//			ArrayList<Parcelable> tmp = bundle.getBundle("tabby").getParcelableArrayList("applications");
+		//try{
+		//	ArrayList<Parcelable> tmp = bundle.getBundle("tabby").getParcelableArrayList("applications");
 		//		
-		//		}catch(Exception e){
-		//			Log.e("VF","error reading boundle");
-		//		}           
+		//}catch(Exception e){
+		//	Log.e("VF","error reading boundle");
+		//}           
 
 
 		mApplications = Rotor.mApplications;
