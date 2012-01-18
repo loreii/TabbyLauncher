@@ -25,6 +25,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class Home extends BaseActivity {
@@ -44,7 +45,7 @@ public class Home extends BaseActivity {
 		setContentView(R.layout.home);
 		mApplicationNameTextView = (TextView) findViewById(R.id.application_name_text_view);
 		mRotor = (Rotor) findViewById(R.id.rotor);
-
+		
 		loadApplications(true, mRotor);
 		
 		mRotor.setArrayElement(mApplicationLoaderThread, mApplications);
@@ -79,14 +80,17 @@ public class Home extends BaseActivity {
 			@Override
 			public void onItemSelected() {
 				mGridView.setAdapter(new ApplicationsAdapter(getBaseContext(), mApplications));
-				mGridView.startAnimation(mGridEntry);
 				if(mGridView.isShown()){
+					mGridView.startAnimation(mGridExit);
 					mGridView.setVisibility(View.GONE);
 					mRotor.setVisibility(View.VISIBLE);					
+					mApplicationNameTextView.setVisibility(View.VISIBLE);					
 
 				}else{
+					mGridView.startAnimation(mGridEntry);
 					mGridView.setVisibility(View.VISIBLE);
 					mRotor.setVisibility(View.GONE);					
+					mApplicationNameTextView.setVisibility(View.GONE);					
 				}
 			}
 		});
