@@ -2,13 +2,19 @@ package org.tabbylauncher;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
+
+import org.tabbylauncher.component.SpinnerArc;
+import org.tabbylauncher.db.TabbyProvider;
 
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -30,6 +36,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 
 public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 	/*
@@ -131,6 +138,7 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 
 		private void onResume() {
 			mRun=true;
+			
 		}
 
 //		private void angleIcon(Canvas canvas) {
@@ -172,20 +180,30 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 			if(debug)
 				debugGrid(canvas);
 
-			mLinePaint.setARGB(255, mCircleRed, mCircleGreen, mCircleBlue);
+
 			mLinePaint.setStyle(Style.STROKE);
 			mLinePaint.setStrokeWidth(mCircleWidth);
-			canvas.drawCircle(mCenterX, mCenterY, mCircleRadius, mLinePaint);
+			mLinePaint.setStrokeCap(Paint.Cap.BUTT);
+
+			RectF oval = new RectF(mCenterX-mCircleRadius,mCenterY- mCircleRadius, mCenterX+mCircleRadius, mCenterY+mCircleRadius);
+
+			int strokeWidth=40;
+			for(Sector sector : round){ 															//render the inner sectors
+				mLinePaint.setColor(sector.color);
+				mLinePaint.setStrokeWidth(strokeWidth);strokeWidth+=5;
+				canvas.drawArc(oval, sector.start, sector.getDegres() , false, mLinePaint);
+			}
+
 			mLinePaint.setStyle(Style.FILL);
 
 			mLinePaint.setARGB(255, 255, 255, 255);
 			if(debug){
 				canvas.drawText("lambda=",mCenterX, mCenterY+10, mLinePaint);
-//				canvas.drawText(applicationList.get(Math.abs(b)%applicationList.size()),mCenterX, mCenterY, mLinePaint);
+				//				canvas.drawText(applicationList.get(Math.abs(b)%applicationList.size()),mCenterX, mCenterY, mLinePaint);
 			}
 
 			synchronized (mApplications) {
-				if (mSelectedApp>=0) {
+				if (mSelectedApp>=0 && applicationReady) {
 					ApplicationInfo app = mApplications.get(mSelectedApp);
 					Bitmap bitmap = ((BitmapDrawable)app.icon).getBitmap();
 					Matrix mtx = new Matrix();
@@ -199,47 +217,51 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 					int bitmapHeight = (scaledBMP.getHeight()>>1);
 
 					canvas.drawBitmap(scaledBMP,(mCanvasWidth/2)-bitmapWidth, (mCanvasHeight/2)-bitmapHeight, null);
+				}else{
+
+					if(spinnerArc!=null)
+						spinnerArc.draw(canvas);
+
 				}
 			}
 
 			canvas.restore();
 		}
 
+
+		private SpinnerArc spinnerArc ; 
+
+
+
+
 		private void debugGrid(Canvas canvas) {
-			
+
 			if(canvas==null)
 				return;
-	
+
 			// Initialize paints for finger hit
 			mDebugLinePaint = new Paint();
 			mDebugLinePaint.setAntiAlias(true);
-			
+
 			mDebugLinePaint.setTextSize(15f);
-			
+
 			mDebugLinePaint.setARGB(255, 0, 255, 0);
 			canvas.drawText("##("+mSelectedApp+")",touchDownX, touchDownY, mDebugLinePaint);
 			mDebugLinePaint.setARGB(255, 255, 0, 0);
 			canvas.drawLine(touchDownX, touchDownY,mCanvasWidth/2, mCanvasHeight/2, mDebugLinePaint);
 			canvas.drawLine(touchDownX, touchDownY,touchDownX, mCanvasHeight/2, mDebugLinePaint);
 			canvas.drawLine(touchDownX, mCanvasHeight/2,mCanvasWidth/2, mCanvasHeight/2, mDebugLinePaint);
-			
-			
+
+
 			for(int i = 0;i<mCanvasHeight;i+=50){
 				canvas.drawText("-> " + i, 0, i,  mDebugLinePaint);
 				canvas.drawLine(0, i, mCanvasWidth, i, mDebugLinePaint);
 			}
-			
+
 			for(int i = 0;i<mCanvasWidth;i+=50){
 				canvas.drawText("-> " + i,i, 20,  mDebugLinePaint);
 				canvas.drawLine(i, 0, i, mCanvasHeight, mDebugLinePaint);
 			}
-
-		}
-
-
-
-		private void runApplication() {
-
 
 		}
 
@@ -265,6 +287,8 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 				mCircleRadius = mCircleExtRadius-(mCircleWidth>>1);
 				mCircleIntRadius = mCircleExtRadius-mCircleWidth;
 				mBitmapSize=((int)mCircleExtRadius)>>1;
+	
+				spinnerArc = new SpinnerArc(mCenterX,mCenterY,100);
 			}
 
 		}
@@ -297,8 +321,11 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 	private double rotation;
 	private boolean refresh;
 	private Thread mApplicationLoaderThread=null;
-	private ArrayList<ApplicationInfo> mApplications = new ArrayList<ApplicationInfo>();
+	public  static ArrayList<ApplicationInfo> mApplications = new ArrayList<ApplicationInfo>();
+
+
 	private int mSelectedApp=-1;
+	private ArrayList<ApplicationInfo> mFavorites;
 	private int mCanvasWidth;
 	private int mCanvasHeight;
 	private int mCenterX;
@@ -306,6 +333,18 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 	private OnItemSelectedListener mOnItemSelectedListener;
 	private OnRotorClickListener mOnRotorClickListener;
 	protected boolean applicationReady;
+
+	private static List<Sector> round = new LinkedList<Sector>();
+
+	static{
+		round.add(new Sector(Color.BLUE,0,12));
+		round.add(new Sector(Color.RED,12,16));
+		round.add(new Sector(Color.GREEN,16,32));
+		round.add(new Sector(Color.GRAY,32,36));
+		round.add(new Sector(Color.YELLOW,36,360));
+
+	}
+
 	/*
 	 * View Handler 
 	 */
@@ -346,11 +385,15 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 		thread.onResume();
 	}
 
+	TabbyProvider db = new TabbyProvider();
+	
 	@Override
 	protected void onAttachedToWindow() {
 		super.onAttachedToWindow();
 //		loadFavorites(mContext);
 		loadApplications(true);
+		
+		
 	}
 
 //	private void loadFavorites(Context context) {
@@ -429,7 +472,7 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 			boolean inInnerCircle = ed<rq;
 			boolean outOfCircle = ed>extrq;
 
-			int i = -1;
+
 			switch (event.getActionMasked()){
 			case MotionEvent.ACTION_DOWN:
 
@@ -438,7 +481,7 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 				prevY=(int)event.getY();
 				lastDownX=prevX;
 				lastDownY=prevY;
-				i=0;
+
 				break;
 			case MotionEvent.ACTION_UP:
 				Log.d("DEBUG", "release action up");
@@ -458,7 +501,7 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 //					int idx = x<0?(y<0?0:3):(y<0?1:2);
 //					mOnRotorClickListener.onQuadrantListener(idx, mFavorites.get(idx).intent);
 //				}
-				i=1; 
+
 				break;
 			default:
 				break;
@@ -471,33 +514,6 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 
 			downtime=event.getDownTime();
 
-			//
-			//			double a = angleFromPoint(prevX,prevY,mCanvasWidth,mCanvasHeight);
-			//			double b = angleFromPoint(touchDownX,touchDownY,mCanvasWidth,mCanvasHeight);
-			//
-			//
-			//
-			//			double lambda2 = a-b;
-			//
-			//			if((lambda2<0 && lambda > 0 )||(lambda2>0 && lambda < 0 )){
-			//				//				vibrator.vibrate(202);
-			//				inversion=true;
-			//			}else{
-			//				inversion=false;
-			//			}
-			//
-			//
-			//
-			//			if(lambda2!=0){
-			//				lambda = lambda2;
-			//				refresh=true;
-			//
-			//				rotation += lambda2;
-			//
-			//				if((rotation % 1)==0 && inversion==false){
-			//					vibrator.vibrate(2);
-			//				}
-			//			}
 
 			if (!inInnerCircle && !outOfCircle) {
 				int b = (int) angleFromPoint(touchDownX,touchDownY,mCanvasWidth,mCanvasHeight);
@@ -506,7 +522,7 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 					float appAngle = 360.0f/mApplications.size();
 					int c = (int) Math.min((int)b/appAngle,mApplications.size());
 					mSelectedApp = c;
-					if (mOnItemSelectedListener!=null && oldSelected!=mSelectedApp) {
+					if (mOnItemSelectedListener!=null && oldSelected!=mSelectedApp && applicationReady) {
 						mOnItemSelectedListener.onItemSelected(this, mApplications, 
 								mApplications.get(mSelectedApp), mSelectedApp);
 					}
@@ -543,7 +559,7 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 	private void loadApplications(boolean isLaunching) {
 		if (mApplicationLoaderThread==null) {
 			mApplicationLoaderThread = new Thread("ApplicationLoader") {
-				
+
 
 				public void run() {
 					PackageManager manager = getContext().getPackageManager();
@@ -577,7 +593,9 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 								mApplications.size()!=appInfos.size();
 						mApplications.clear();
 						if (appInfos!=null) {
+							int i = 0 ;
 							for (ApplicationInfo info : appInfos) {
+								info.color=ColorUtils.color[i];i=(i+1) % ColorUtils.color.length;
 								mApplications.add(info);
 							}
 						}
@@ -588,6 +606,7 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 							}
 						});
 						mApplicationLoaderThread=null;
+						updateSectors();
 						applicationReady=true;
 					}
 				}
@@ -619,4 +638,76 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 				ApplicationInfo appInfo, int index);
 		public void onQuadrantListener(int idx, Intent intent);
 	}
+
+
+	@Override
+	protected void onVisibilityChanged(View changedView, int visibility) {
+		if(visibility==0){
+			//back on screen
+			updateSectors();
+		}
+		super.onVisibilityChanged(changedView, visibility);
+	}
+	
+	
+	public void updateSectors(){
+		if (mApplications.isEmpty())
+			return;
+		
+		ArrayList<ApplicationInfo> tmp = new ArrayList<ApplicationInfo>();
+		//remove all unset colors
+		for (ApplicationInfo i : mApplications){
+			if(i.color!=-1)
+				tmp.add(i);
+		}
+		//sort refined list by color
+		Comparator<? super ApplicationInfo> comparator= new Comparator<ApplicationInfo>() {
+			@Override
+			public int compare(ApplicationInfo lhs, ApplicationInfo rhs) {
+				return lhs.color.compareTo(rhs.color);
+			}
+		};
+		Collections.sort(tmp, comparator);
+
+		round.clear();
+
+		int appAngle = 360 / mApplications.size();
+
+
+		Sector s = new Sector(tmp.remove(0).color, 0, appAngle);
+		for(ApplicationInfo i:tmp){
+			if(!i.color.equals(s.color)){
+				round.add(s);
+
+				s= new Sector(i.color, s.end, s.end);
+
+			}
+			s.end+=appAngle;
+
+		}
+
+	}
+
+
+}
+
+
+class Sector{
+	int color;
+	private int degres;
+	int start;
+	int end;
+
+	public Sector(int color, int start,int end) {
+		super();
+		this.color = color;
+		this.start=start;
+		this.end=end;
+
+	}
+
+	public int getDegres() {
+		return this.degres = end-start;
+	}
+
 }

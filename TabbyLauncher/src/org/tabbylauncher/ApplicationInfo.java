@@ -43,6 +43,8 @@ public class ApplicationInfo {
      * The application icon.
      */
     public Drawable icon;
+    
+    public Integer color=-1;
 
     /**
      * When set to true, indicates that the icon has been resized.
@@ -85,4 +87,13 @@ public class ApplicationInfo {
         result = 31 * result + (name != null ? name.hashCode() : 0);
         return result;
     }
+
+	@Override
+	public String toString() {
+		return "ApplicationInfo [title=" + title + ", intent=" + intent
+				+ ", pakage=" + pakage + ", icon=" + icon + ", color=" + color
+				+ ", filtered=" + filtered + "]";
+	}
+    
+    
 }
