@@ -21,9 +21,12 @@
 
          <Button
              android:id="@+id/tag_item_color"
-             android:layout_width="match_parent"
+             android:layout_width="wrap_content"
              android:layout_height="wrap_content"
-             
-             android:text="" />
+             android:background="#FFFF0000"
+             android:height="50dp"
+             android:width="50dp"
+             android:text="" 
+             />
 
 </LinearLayout>
