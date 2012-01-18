@@ -39,7 +39,7 @@
         android:numColumns="auto_fit"
         android:persistentDrawingCache="animation|scrolling"
         android:scrollbars="none"
-        android:stackFromBottom="true"
+        android:stackFromBottom="false"
         android:stretchMode="spacingWidth"
         android:visibility="gone" />
 

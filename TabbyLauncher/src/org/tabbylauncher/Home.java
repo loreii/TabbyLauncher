@@ -23,12 +23,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class Home extends BaseActivity {
+public class Home extends BaseActivity implements OnItemClickListener{
 	TextView mApplicationNameTextView;
 	Rotor mRotor;
 	StackLayoutBar mStackLayoutBar;
@@ -70,6 +72,7 @@ public class Home extends BaseActivity {
 		});
 
 		mGridView = (GridView) findViewById(R.id.all_apps);
+		mGridView.setOnItemClickListener(this);
 		mGridEntry = AnimationUtils.loadAnimation(this, R.anim.grid_entry);
 		mGridExit = AnimationUtils.loadAnimation(this, R.anim.grid_exit);
 
@@ -164,6 +167,17 @@ public class Home extends BaseActivity {
 
 			return convertView;
 		}
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+
+		ApplicationInfo applicationInfo = mApplications.get(position);
+		if(applicationInfo != null && applicationInfo.intent != null){
+			startActivity(applicationInfo.intent);
+		}
+		
+		
 	}
 
 

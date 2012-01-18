@@ -53,7 +53,7 @@ public class HomeBar extends Fragment {
 		View fragment = getView();
 		mStackLayoutBar = (StackLayoutBar) fragment.findViewById(R.id.stacklayoutbar);
 
-		setElement(getResources().getDrawable(R.drawable.all_applications), "All App");
+//		setElement(getResources().getDrawable(R.drawable.all_applications), "All App");
 		
 		FragmentActivity fragmentActivity = getActivity();
 		Context context = fragmentActivity.getApplicationContext();

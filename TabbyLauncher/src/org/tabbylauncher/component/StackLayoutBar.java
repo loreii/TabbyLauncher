@@ -13,6 +13,7 @@ import org.tabbylauncher.Rotor.OnItemSelectedListener;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.provider.ContactsContract;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -51,25 +52,25 @@ public class StackLayoutBar extends LinearLayout implements OnClickListener{
 		mInflater = LayoutInflater.from(getContext());
 
 
-		setApplicationsInfo(context.getResources().getDrawable(android.R.drawable.ic_menu_call), 
+		setApplicationsInfo(context.getResources().getDrawable(R.drawable.phone_icon), 
 				"Call",
 				new Intent(Intent.ACTION_DIAL));
 
-		setApplicationsInfo(context.getResources().getDrawable(android.R.drawable.ic_menu_send), 
+		setApplicationsInfo(context.getResources().getDrawable(R.drawable.contacts_icon), 
 				"Message",
 				new Intent(Intent.ACTION_VIEW, ContactsContract.Contacts.CONTENT_URI));
 
-		setApplicationsInfo(context.getResources().getDrawable(android.R.drawable.ic_dialog_dialer), 
+		setApplicationsInfo(context.getResources().getDrawable(R.drawable.cat_icon), 
 				"All",
 				null);
 
-		setApplicationsInfo(context.getResources().getDrawable(android.R.drawable.ic_menu_search), 
+		setApplicationsInfo(context.getResources().getDrawable(R.drawable.message_icon), 
 				"Search",
-				new Intent(Intent.ACTION_SEARCH));
+				new Intent(Intent.ACTION_VIEW, Uri.parse("sms:")));
 
-		setApplicationsInfo(context.getResources().getDrawable(android.R.drawable.ic_menu_add), 
+		setApplicationsInfo(context.getResources().getDrawable(R.drawable.camera_icon), 
 				"Add",
-				new Intent());
+				new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE));
 
 
 		setBackgroundDrawable(null);
@@ -89,7 +90,8 @@ public class StackLayoutBar extends LinearLayout implements OnClickListener{
 		ImageView imageview = (ImageView) view.findViewById(R.id.image);
 		imageview.setImageDrawable(applicationInfo.icon);
 		TextView titleview = (TextView) view.findViewById(R.id.title);
-		titleview.setText(applicationInfo.title);
+		titleview.setVisibility(View.GONE);
+//		titleview.setText(applicationInfo.title);
 		view.setTag(applicationInfo.intent);
 		view.setOnClickListener(this);
 		this.addView(view);
