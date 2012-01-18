@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-/* //device/apps/common/res/drawable/checkbox.xml
+/* //device/apps/common/res/anim/fade_in.xml
 **
 ** Copyright 2007, The Android Open Source Project
 **
@@ -18,8 +18,10 @@
 */
 -->
 
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_checked="false" android:drawable="@drawable/asset_arrow_up" />
-    <item android:state_checked="true" android:drawable="@drawable/asset_arrow_down" />
-</selector>
-
+<set xmlns:android="http://schemas.android.com/apk/res/android" 
+    android:interpolator="@android:anim/decelerate_interpolator">
+    <scale android:fromXScale="0.8" android:toXScale="1.0"
+           android:fromYScale="0.9" android:toYScale="1.0"
+           android:pivotX="100%" android:pivotY="100%" android:duration="200" />
+    <alpha android:fromAlpha="0.5" android:toAlpha="1.0" android:duration="200" />
+</set>

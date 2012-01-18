@@ -3,12 +3,17 @@
  */
 package org.tabbylauncher.component;
 
+import java.util.List;
+
 import org.tabbylauncher.ApplicationInfo;
 import org.tabbylauncher.R;
+import org.tabbylauncher.Rotor;
+import org.tabbylauncher.Rotor.OnItemSelectedListener;
 
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.provider.ContactsContract;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -25,7 +30,7 @@ import android.widget.TextView;
 public class StackLayoutBar extends LinearLayout implements OnClickListener{
 
 	LayoutInflater mInflater;
-
+	OnItemSelectedListener  mOnItemSelectedListener; 
 	/**
 	 * @param context
 	 */
@@ -45,27 +50,27 @@ public class StackLayoutBar extends LinearLayout implements OnClickListener{
 
 	private void initLayout(Context context) {
 		mInflater = LayoutInflater.from(getContext());
-		
-		
-		setApplicationsInfo(context.getResources().getDrawable(android.R.drawable.ic_menu_call), 
+
+
+		setApplicationsInfo(context.getResources().getDrawable(R.drawable.phone_icon), 
 				"Call",
 				new Intent(Intent.ACTION_DIAL));
-		
-		setApplicationsInfo(context.getResources().getDrawable(android.R.drawable.ic_menu_send), 
+
+		setApplicationsInfo(context.getResources().getDrawable(R.drawable.contacts_icon), 
 				"Message",
 				new Intent(Intent.ACTION_VIEW, ContactsContract.Contacts.CONTENT_URI));
-		
-		setApplicationsInfo(context.getResources().getDrawable(android.R.drawable.ic_dialog_dialer), 
-				"All",
-				new Intent(Intent.ACTION_MAIN));
-		
-		setApplicationsInfo(context.getResources().getDrawable(android.R.drawable.ic_menu_search), 
-				"Search",
-				new Intent(Intent.ACTION_SEARCH));
 
-		setApplicationsInfo(context.getResources().getDrawable(android.R.drawable.ic_menu_add), 
+		setApplicationsInfo(context.getResources().getDrawable(R.drawable.cat_icon), 
+				"All",
+				null);
+
+		setApplicationsInfo(context.getResources().getDrawable(R.drawable.message_icon), 
+				"Search",
+				new Intent(Intent.ACTION_VIEW, Uri.parse("sms:")));
+
+		setApplicationsInfo(context.getResources().getDrawable(R.drawable.camera_icon), 
 				"Add",
-				new Intent());
+				new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE));
 
 
 		setBackgroundDrawable(null);
@@ -79,13 +84,14 @@ public class StackLayoutBar extends LinearLayout implements OnClickListener{
 		applicationInfo.intent = intent;
 		addIcon(applicationInfo);
 	}
-	
+
 	private void addIcon(ApplicationInfo applicationInfo) {
 		View view = mInflater.inflate(R.layout.all_applications_button, this, false);
 		ImageView imageview = (ImageView) view.findViewById(R.id.image);
 		imageview.setImageDrawable(applicationInfo.icon);
 		TextView titleview = (TextView) view.findViewById(R.id.title);
-		titleview.setText(applicationInfo.title);
+		titleview.setVisibility(View.GONE);
+//		titleview.setText(applicationInfo.title);
 		view.setTag(applicationInfo.intent);
 		view.setOnClickListener(this);
 		this.addView(view);
@@ -93,9 +99,22 @@ public class StackLayoutBar extends LinearLayout implements OnClickListener{
 
 	@Override
 	public void onClick(View view) {
-		getContext().startActivity((Intent) view.getTag());
-		
-		
+		Object object = view.getTag();
+		if(object != null){
+			getContext().startActivity((Intent) object);
+		}else{
+			mOnItemSelectedListener.onItemSelected();
+		}
+
+
+	}
+	
+	public synchronized void setOnItemSelectedListener(OnItemSelectedListener listener) {
+		this.mOnItemSelectedListener=listener;
+	}
+
+	public static interface OnItemSelectedListener {
+		public void onItemSelected();
 	}
 
 

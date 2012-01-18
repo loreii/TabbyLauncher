@@ -217,11 +217,12 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 					int bitmapHeight = (scaledBMP.getHeight()>>1);
 
 					canvas.drawBitmap(scaledBMP,(mCanvasWidth/2)-bitmapWidth, (mCanvasHeight/2)-bitmapHeight, null);
+					scaledBMP.recycle();
+					scaledBMP=null;
 				}else{
 
 					if(spinnerArc!=null)
 						spinnerArc.draw(canvas);
-
 				}
 			}
 
@@ -321,9 +322,7 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 	private double rotation;
 	private boolean refresh;
 	private Thread mApplicationLoaderThread=null;
-	public  static ArrayList<ApplicationInfo> mApplications = new ArrayList<ApplicationInfo>();
-
-
+	public static ArrayList<ApplicationInfo> mApplications = null;
 	private int mSelectedApp=-1;
 	private ArrayList<ApplicationInfo> mFavorites;
 	private int mCanvasWidth;
@@ -391,7 +390,7 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 	protected void onAttachedToWindow() {
 		super.onAttachedToWindow();
 //		loadFavorites(mContext);
-		loadApplications(true);
+//		loadApplications(true);
 		
 		
 	}
@@ -556,64 +555,64 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 		this.invalidate();
 	}
 
-	private void loadApplications(boolean isLaunching) {
-		if (mApplicationLoaderThread==null) {
-			mApplicationLoaderThread = new Thread("ApplicationLoader") {
-
-
-				public void run() {
-					PackageManager manager = getContext().getPackageManager();
-
-					Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
-					mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-
-					final List<ResolveInfo> apps = manager.queryIntentActivities(mainIntent, 0);
-					Collections.sort(apps, new ResolveInfo.DisplayNameComparator(manager));
-					ArrayList<ApplicationInfo> appInfos=null;
-					if (apps != null) {
-						final int count = apps.size();
-
-						appInfos = new ArrayList<ApplicationInfo>(count);
-						for (int i = 0; i < count; i++) {
-							ApplicationInfo application = new ApplicationInfo();
-							ResolveInfo info = apps.get(i);
-							application.title = info.loadLabel(manager);
-							application.pakage = info.activityInfo.applicationInfo.packageName;
-							application.setActivity(new ComponentName(
-									info.activityInfo.applicationInfo.packageName,
-									info.activityInfo.name),
-									Intent.FLAG_ACTIVITY_NEW_TASK
-									| Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-							application.icon = info.activityInfo.loadIcon(manager);
-							appInfos.add(application);
-						}
-					}
-					synchronized (mApplications) {
-						final boolean changed = appInfos==null||
-								mApplications.size()!=appInfos.size();
-						mApplications.clear();
-						if (appInfos!=null) {
-							int i = 0 ;
-							for (ApplicationInfo info : appInfos) {
-								info.color=ColorUtils.color[i];i=(i+1) % ColorUtils.color.length;
-								mApplications.add(info);
-							}
-						}
-						mHandler.post(new Runnable() {
-							@Override
-							public void run() {
-								onApplicationsLoadingFinished(changed);
-							}
-						});
-						mApplicationLoaderThread=null;
-						updateSectors();
-						applicationReady=true;
-					}
-				}
-			};
-			mApplicationLoaderThread.start();
-		}
-	}
+//	private void loadApplications(boolean isLaunching) {
+//		if (mApplicationLoaderThread==null) {
+//			mApplicationLoaderThread = new Thread("ApplicationLoader") {
+//
+//
+//				public void run() {
+//					PackageManager manager = getContext().getPackageManager();
+//
+//					Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
+//					mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+//
+//					final List<ResolveInfo> apps = manager.queryIntentActivities(mainIntent, 0);
+//					Collections.sort(apps, new ResolveInfo.DisplayNameComparator(manager));
+//					ArrayList<ApplicationInfo> appInfos=null;
+//					if (apps != null) {
+//						final int count = apps.size();
+//
+//						appInfos = new ArrayList<ApplicationInfo>(count);
+//						for (int i = 0; i < count; i++) {
+//							ApplicationInfo application = new ApplicationInfo();
+//							ResolveInfo info = apps.get(i);
+//							application.title = info.loadLabel(manager);
+//							application.pakage = info.activityInfo.applicationInfo.packageName;
+//							application.setActivity(new ComponentName(
+//									info.activityInfo.applicationInfo.packageName,
+//									info.activityInfo.name),
+//									Intent.FLAG_ACTIVITY_NEW_TASK
+//									| Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+//							application.icon = info.activityInfo.loadIcon(manager);
+//							appInfos.add(application);
+//						}
+//					}
+//					synchronized (mApplications) {
+//						final boolean changed = appInfos==null||
+//								mApplications.size()!=appInfos.size();
+//						mApplications.clear();
+//						if (appInfos!=null) {
+//							int i = 0 ;
+//							for (ApplicationInfo info : appInfos) {
+//								info.color=ColorUtils.color[i];i=(i+1) % ColorUtils.color.length;
+//								mApplications.add(info);
+//							}
+//						}
+//						mHandler.post(new Runnable() {
+//							@Override
+//							public void run() {
+//								onApplicationsLoadingFinished(changed);
+//							}
+//						});
+//						mApplicationLoaderThread=null;
+//						updateSectors();
+//						applicationReady=true;
+//					}
+//				}
+//			};
+//			mApplicationLoaderThread.start();
+//		}
+//	}
 
 	public ApplicationInfo getSelectedAppInfo() {
 		synchronized (mApplications) {
@@ -689,6 +688,12 @@ public class Rotor extends SurfaceView implements SurfaceHolder.Callback  {
 	}
 
 
+
+	public synchronized void setArrayElement(Thread applicationLoaderThread, 
+			ArrayList<ApplicationInfo> applications){
+		mApplicationLoaderThread=applicationLoaderThread;
+		mApplications=applications;
+	}
 }
 
 

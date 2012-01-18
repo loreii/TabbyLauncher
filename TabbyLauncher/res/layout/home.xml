@@ -5,54 +5,48 @@
     android:background="@drawable/tabby_kruger"
     android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/application_name_text_view"
+        <TextView
+            android:id="@+id/application_name_text_view"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Loading..."
+            android:textColor="#DDDDCC"
+            android:textSize="24dp"
+            android:textStyle="bold" />
+
+        <org.tabbylauncher.Rotor
+            android:id="@+id/rotor"
+            android:layout_width="320dp"
+            android:layout_height="320dp" />
+
+<!--         <TextView -->
+<!--             android:layout_width="fill_parent" -->
+<!--             android:layout_height="0dp" -->
+<!--             android:layout_weight="1" -->
+<!--             android:gravity="center" /> -->
+
+    <GridView
+        android:id="@+id/all_apps"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:gravity="center"
-        android:text="Loading..."
-        android:textColor="#DDDDCC"
-        android:textSize="24dp"
-        android:textStyle="bold" />
-
-    <org.tabbylauncher.Rotor
-        android:id="@+id/rotor"
-        android:layout_width="320dp"
-        android:layout_height="320dp" />
-
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="center" />
+        android:alwaysDrawnWithCache="true"
+        android:background="@color/Now_0_40o"
+        android:columnWidth="78dp"
+        android:drawSelectorOnTop="false"
+        android:numColumns="auto_fit"
+        android:persistentDrawingCache="animation|scrolling"
+        android:scrollbars="none"
+        android:stackFromBottom="false"
+        android:stretchMode="spacingWidth"
+        android:visibility="gone" />
 
     <org.tabbylauncher.component.StackLayoutBar
         android:id="@+id/stacklayoutbar"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-                android:layout_weight="1"
         android:orientation="horizontal" />
-
-    <!-- don't used in this moment -->
-    <!-- <org.tabbylauncher.component.HorizontalPager -->
-    <!-- android:id="@+id/horizontal_pager" -->
-    <!-- android:layout_width="fill_parent" -->
-    <!-- android:layout_height="fill_parent" > -->
-
-
-    <!-- <fragment -->
-    <!-- android:id="@+id/app" -->
-    <!-- android:name="org.tabbylauncher.fragment.Applications" -->
-    <!-- android:layout_width="fill_parent" -->
-    <!-- android:layout_height="fill_parent" /> -->
-
-
-    <!-- <fragment -->
-    <!-- android:id="@+id/contact" -->
-    <!-- android:name="org.tabbylauncher.fragment.AllContacts" -->
-    <!-- android:layout_width="fill_parent" -->
-    <!-- android:layout_height="fill_parent" /> -->
-    <!-- </org.tabbylauncher.component.HorizontalPager> -->
 
 </LinearLayout>
